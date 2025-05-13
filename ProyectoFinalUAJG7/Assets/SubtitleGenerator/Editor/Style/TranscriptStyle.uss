@@ -1,0 +1,36 @@
+#title {
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    height: 40px;
+}
+
+#audioField {
+    padding-left: 5px;
+    padding-right: 8px;
+    padding-top: 8px;
+    padding-bottom: 0;
+}
+
+#fileInfo {
+    height: 40px;
+    -unity-text-align: upper-left;
+    color: white;
+    border-radius: 4px;
+    -unity-text-align: middle-left;
+    padding-top: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+    padding-left: 5px;
+}
+
+#transcript {
+    height: 150px;
+    -unity-text-align: upper-left;
+    margin: 4px;
+    padding: 8px;
+    background-color: rgb(46, 46, 46);
+    color: white;
+    border-radius: 4px;
+    -unity-text-align: middle-left;
+}
