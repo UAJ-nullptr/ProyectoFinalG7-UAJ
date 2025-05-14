@@ -1,16 +1,22 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <Style src="project://database/Assets/SubtitleGenerator/Editor/Style/TranscriptStyle.uss?fileID=7433441132597879392&amp;guid=ccf30f7ae400f7e498d2a857cf8ac2d8&amp;type=3#TranscriptStyle" />
-    <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" style="height: 45px;" />
-    <uie:ObjectField label="Audio File" name="audioField" style="margin-bottom: 5px;" />
-    <ui:Button text="Process" parse-escape-sequences="true" display-tooltip-when-elided="true" name="process" style="margin-bottom: 0;" />
-    <ui:TextField picking-mode="Ignore" label="File Info" value="filler text" multiline="true" name="fileInfo" />
-    <ui:Foldout text="Actors" name="Actors" />
-    <ui:VisualElement name="transcriptView" style="flex-grow: 1; height: 185px;">
-        <ui:TextField picking-mode="Ignore" label="Transcript" value="filler text" name="transcript" style="align-items: stretch; justify-content: space-between; flex-direction: row; align-self: stretch; height: 210px;" />
-        <ui:VisualElement name="buttonsView" style="flex-grow: 1; flex-direction: row; align-self: flex-start;">
-            <ui:Button text="Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="saveButton" style="flex-grow: 1; height: 20px;" />
-            <ui:Button text="Export" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportButton" style="flex-grow: 1; height: 20px;" />
-            <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="deleteButton" style="flex-grow: 1; height: 20px;" />
+    <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" style="height: 22px;" />
+    <ui:VisualElement name="MainGrid" style="flex-grow: 1; flex-direction: row;">
+        <ui:VisualElement name="FileConfig" style="flex-grow: 1; height: 100%; width: 70%;">
+            <uie:ObjectField label="Audio File" name="audioField" style="margin-bottom: 5px;" />
+            <ui:Button text="Process" parse-escape-sequences="true" display-tooltip-when-elided="true" name="process" style="margin-bottom: 0;" />
+            <uie:ObjectField label="File Info" name="fileInfo" />
+            <ui:Foldout text="Actors" name="Actors" style="max-height: none;" />
+            <ui:VisualElement name="buttonsView" style="flex-grow: 1; flex-direction: row; align-self: flex-end; transform-origin: center; min-height: auto;">
+                <ui:Button text="Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="saveButton" style="flex-grow: 1; height: 20px;" />
+                <ui:Button text="Export" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportButton" style="flex-grow: 1; height: 20px;" />
+                <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="deleteButton" style="flex-grow: 1; height: 20px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="transcriptViewer" style="flex-grow: 1;">
+            <ui:VisualElement name="transcriptView" style="flex-grow: 1; height: 100%;">
+                <ui:TextField picking-mode="Ignore" value="filler text" name="transcript" multiline="true" style="align-items: stretch; justify-content: space-between; flex-direction: row; align-self: stretch; height: auto; min-height: 100%;" />
+            </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>
