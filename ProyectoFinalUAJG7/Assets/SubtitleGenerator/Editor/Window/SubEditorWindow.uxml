@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <Style src="project://database/Assets/SubtitleGenerator/Editor/Style/TranscriptStyle.uss?fileID=7433441132597879392&amp;guid=ccf30f7ae400f7e498d2a857cf8ac2d8&amp;type=3#TranscriptStyle" />
-    <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" style="height: 22px;" />
+    <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" />
     <ui:VisualElement name="MainGrid" style="flex-grow: 1; flex-direction: row;">
         <ui:VisualElement name="FileConfig" style="flex-grow: 1; height: 100%; width: 70%;">
             <uie:ObjectField label="Audio File" name="audioField" style="margin-bottom: 5px;" />
