@@ -16,7 +16,7 @@ public class TranscriptWindow : EditorWindow
     private UnityEditor.UIElements.ObjectField audioFileInput;
     private UnityEngine.UIElements.Button processButton;
     private UnityEditor.UIElements.ObjectField fileInfoInput;
-    private DropdownField actorsDropdown;
+    private Foldout actorsFoldout;
     private UnityEngine.UIElements.Button saveButton;
     private UnityEngine.UIElements.Button exportButton;
     private UnityEngine.UIElements.Button deleteButton;
@@ -51,8 +51,8 @@ public class TranscriptWindow : EditorWindow
         audioFileInput = root.Q<UnityEditor.UIElements.ObjectField>("audioField");
         audioFileInput.objectType = typeof(AudioClip);
         processButton = root.Q<UnityEngine.UIElements.Button>("process");
-        audioFileInput = root.Q<UnityEditor.UIElements.ObjectField>("fileInfo");
-        actorsDropdown = root.Q<DropdownField>("actors");
+        fileInfoInput = root.Q<UnityEditor.UIElements.ObjectField>("fileInfo");
+        actorsFoldout = root.Q<Foldout>("actors");
         saveButton = root.Q<UnityEngine.UIElements.Button>("saveButton");
         exportButton = root.Q<UnityEngine.UIElements.Button>("exportButton");
         deleteButton = root.Q<UnityEngine.UIElements.Button>("deleteButton");
@@ -81,7 +81,7 @@ public class TranscriptWindow : EditorWindow
         else
         {
             audioToTranscript = (AudioClip)evt.newValue;
-            Debug.Log(audioToTranscript.name + "Setted correctly.");
+            Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
         }
     }
 
@@ -98,7 +98,20 @@ public class TranscriptWindow : EditorWindow
 
             // Rellenar el dropdown de actores con la informacion pertinente
             List<string> testList = new List<string> { "Opción A", "Opción B", "Opción C" };
-            actorsDropdown.choices = testList;
+            FillActors(testList);
+
+            Debug.Log("Processed");
+        }
+    }
+
+    // Rellenara los actores segun la lista recibida
+    private void FillActors(List<string> actors)
+    {
+        actorsFoldout.Clear();
+
+        foreach (string actor in actors) {
+            var actorTextField = new TextField(actor);
+            actorsFoldout.Add(actorTextField);
         }
     }
 

@@ -6,7 +6,7 @@
             <uie:ObjectField label="Audio File" name="audioField" style="margin-bottom: 5px;" />
             <ui:Button text="Process" parse-escape-sequences="true" display-tooltip-when-elided="true" name="process" style="margin-bottom: 0;" />
             <uie:ObjectField label="File Info" name="fileInfo" />
-            <ui:Foldout text="Actors" name="Actors" style="max-height: none;" />
+            <ui:Foldout text="Actors" name="actors" style="max-height: none;" />
             <ui:VisualElement name="buttonsView" style="flex-grow: 1; flex-direction: row; align-self: flex-end; transform-origin: center; min-height: auto;">
                 <ui:Button text="Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="saveButton" style="flex-grow: 1; height: 20px;" />
                 <ui:Button text="Export" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportButton" style="flex-grow: 1; height: 20px;" />
