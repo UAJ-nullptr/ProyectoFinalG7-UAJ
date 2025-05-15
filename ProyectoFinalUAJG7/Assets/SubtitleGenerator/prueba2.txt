@@ -1,0 +1,21 @@
+{
+  "text": "Hola, bienvenidos al juego. Espero que lo disfruten y encuentren todos los secretos ocultos.",
+  "segments": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 2.5,
+      "text": "Hola, bienvenidos al juego.",
+      "temperature": 0.0,
+      "avg_logprob": -0.4,
+      "compression_ratio": 1.1,
+      "no_speech_prob": 0.01
+    },
+    {
+      "id": 1,
+      "start": 2.5,
+      "end": 5.0,
+      "text": "Espero que lo disfruten y encuentren todos los secretos ocultos."
+    }
+  ]
+} 

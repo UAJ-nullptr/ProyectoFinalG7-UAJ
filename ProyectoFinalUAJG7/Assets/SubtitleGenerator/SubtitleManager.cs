@@ -5,6 +5,7 @@ using UnityEngine;
 using System.IO;
 using System;
 using static SubtitleManager;
+using System.Globalization;
 
 public class SubtitleManager : MonoBehaviour
 {
@@ -14,10 +15,13 @@ public class SubtitleManager : MonoBehaviour
     {
         public string talker;
         public string content;
-        public string startTime;
-        public string endTime;
+        //public string startTime;
+        public int startTime;
+        //public string endTime;
+        public int endTime;
     }
 
+    [System.Serializable]
     public class JSONformat
     {
         public string id;
@@ -26,6 +30,7 @@ public class SubtitleManager : MonoBehaviour
         public string text;
     }
 
+    [System.Serializable]
     public class Root
     {
         public string text;
@@ -34,7 +39,7 @@ public class SubtitleManager : MonoBehaviour
 
     #region atributes
     [SerializeField]
-    string path = "";
+    string path = "prueba.txt";
     StreamReader reader;
 
     [SerializeField]
@@ -63,34 +68,45 @@ public class SubtitleManager : MonoBehaviour
     {
         StreamReader reader = new StreamReader(instance.path);
 
+        SubtitleInfo subtitleInfo = new SubtitleInfo();
+        subtitleInfo.startTime = 0;
+        subtitleInfo.endTime = 0;
+        subtitleInfo.content = "";
+        subtitleInfo.talker = "";
+
         String line;
         // Procesamos línea por línea
         while ((line = reader.ReadLine()) != null)
         {
-            SubtitleInfo subtitleInfo = new SubtitleInfo();
-            subtitleInfo.startTime = "";
-            subtitleInfo.endTime = "";
-            subtitleInfo.content = "";
-            subtitleInfo.talker = "";
-
             // Si la línea contiene --> tiene startTime y endTime
             if (line.Contains("-->"))
             {
                 string[] parts = line.Split(new string[] { " --> " }, StringSplitOptions.None);
                 if (parts.Length == 2)
                 {
-                    subtitleInfo.startTime = parts[0].Trim();
-                    subtitleInfo.endTime = parts[1].Trim();
+                    //subtitleInfo.startTime = parts[0].Trim();
+                    //subtitleInfo.endTime = parts[1].Trim();
+
+                    // Cambio de formato
+                    TimeSpan time = TimeSpan.ParseExact(parts[0].Trim(), @"hh\:mm\:ss\,fff", CultureInfo.InvariantCulture);
+                    int totalMilliseconds = (int)time.TotalMilliseconds;
+                    subtitleInfo.startTime = totalMilliseconds;
+                    time = TimeSpan.ParseExact(parts[1].Trim(), @"hh\:mm\:ss\,fff", CultureInfo.InvariantCulture);
+                    totalMilliseconds = (int)time.TotalMilliseconds;
+                    subtitleInfo.endTime = totalMilliseconds;
                 }
             }
-            else if (line != "\n") // Si no contiene el tiempo ni es un salto de línea es el contenido
+            else if (line != "\n" && line.Length > 1) // Si no contiene el tiempo ni es un salto de línea es el contenido
             {
                 subtitleInfo.content = line;
             }
-            // Se añade el segmento a la lista de súbtitulos
-            subtitles.Add(subtitleInfo);
+            else if (line == "")
+            {
+                // Se añade el segmento a la lista de súbtitulos
+                subtitles.Add(subtitleInfo);
+            }           
         }
-
+        subtitles.Add(subtitleInfo);
         reader.Close();
     }
 
@@ -108,8 +124,10 @@ public class SubtitleManager : MonoBehaviour
             {
                 subtitleInfo.talker = "";
                 subtitleInfo.content = segment.text;
-                subtitleInfo.startTime = segment.start;
-                subtitleInfo.endTime = segment.end;
+                float startAux = float.Parse(segment.start, CultureInfo.InvariantCulture.NumberFormat);
+                subtitleInfo.startTime = (int)(startAux * 1000);
+                float endAux = float.Parse(segment.end, CultureInfo.InvariantCulture.NumberFormat);
+                subtitleInfo.endTime = (int)(endAux * 1000);
 
                 subtitles.Add(subtitleInfo);
             }
@@ -118,6 +136,52 @@ public class SubtitleManager : MonoBehaviour
         {
             Debug.Log("JSON no encontrado: " + instance.path);
         }
+    }
+
+    public void readTextWebVTT()
+    {
+        StreamReader reader = new StreamReader(instance.path);
+
+        SubtitleInfo subtitleInfo = new SubtitleInfo();
+        subtitleInfo.startTime = 0;
+        subtitleInfo.endTime = 0;
+        subtitleInfo.content = "";
+        subtitleInfo.talker = "";
+
+        String line;
+        // Procesamos línea por línea
+        while ((line = reader.ReadLine()) != null)
+        {
+            // Si la línea contiene --> tiene startTime y endTime
+            if (line.Contains("-->"))
+            {
+                string[] parts = line.Split(new string[] { " --> " }, StringSplitOptions.None);
+                if (parts.Length == 2)
+                {
+                    //subtitleInfo.startTime = parts[0].Trim();
+                    //subtitleInfo.endTime = parts[1].Trim();
+
+                    // Cambio de formato
+                    TimeSpan time = TimeSpan.ParseExact(parts[0].Trim(), @"hh\:mm\:ss\.fff", CultureInfo.InvariantCulture);
+                    int totalMilliseconds = (int)time.TotalMilliseconds;
+                    subtitleInfo.startTime = totalMilliseconds;
+                    time = TimeSpan.ParseExact(parts[1].Trim(), @"hh\:mm\:ss\.fff", CultureInfo.InvariantCulture);
+                    totalMilliseconds = (int)time.TotalMilliseconds;
+                    subtitleInfo.endTime = totalMilliseconds;
+                }
+            }
+            else if (line != "\n" && line.Length > 1) // Si no contiene el tiempo ni es un salto de línea es el contenido
+            {
+                subtitleInfo.content = line;
+            }
+            else if (line == "")
+            {
+                // Se añade el segmento a la lista de súbtitulos
+                subtitles.Add(subtitleInfo);
+            }
+        }
+        subtitles.Add(subtitleInfo);
+        reader.Close();
     }
     #endregion
 
@@ -137,6 +201,10 @@ public class SubtitleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        readTextSRT();
+        //readTextJSON();
+        //readTextWebVTT();
+
         //SubtitleInfo subtitleInfo = new SubtitleInfo();
 
         //subtitleInfo.talker = "";
@@ -159,9 +227,9 @@ public class SubtitleManager : MonoBehaviour
     {
         time += Time.deltaTime;
         // Comprobamos que inicia el hablante
-        if (cont < subtitles.Count && int.Parse(subtitles[cont].startTime) < time)
+        if (cont < subtitles.Count && subtitles[cont].startTime < time * 1000)
         {
-            if(cont+1 < subtitles.Count && int.Parse(subtitles[cont+1].startTime) < time) // Dos hablantes
+            if(cont+1 < subtitles.Count && subtitles[cont+1].startTime < time * 1000) // Dos hablantes
             {
                 // Descativamos el texto individual
                 subtitleComponent.gameObject.SetActive(false);
@@ -187,7 +255,7 @@ public class SubtitleManager : MonoBehaviour
         }
 
         // Si se ha terminado el texto y se ha pasado el tiempo se desactivan los subtítulos
-        if(cont >= subtitles.Count && int.Parse(subtitles[cont-1].endTime) < time)
+        if(cont > 0 && cont >= subtitles.Count && subtitles[cont-1].endTime < time * 1000)
         {
             subtitleComponent.gameObject.SetActive(false);
             subtitleComponentSpeaker1.gameObject.SetActive(false);
