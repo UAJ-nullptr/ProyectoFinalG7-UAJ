@@ -1,5 +1,6 @@
 import os
 import subprocess
+import shutil
 
 # Función para instalar un paquete
 def install_package(package):
@@ -45,6 +46,10 @@ for package in packages:
 
 print("Instalación completa de todos los paquetes.")
 
+# Añadir ffmpeg al PATH de manera temporal
+os.environ["PATH"] = r"C:\Users\pavip\Desktop\Universidad\ProyectoFinalG7-UAJ\ffmpeg 7.1.1\bin" + os.pathsep + os.environ["PATH"]
+print("ffmpeg encontrado en:", shutil.which("ffmpeg"))
+
 #Una vez instalados los paquetes, se hace la transcripción
 
 from pyannote.audio.pipelines import SpeakerDiarization
@@ -53,6 +58,7 @@ import librosa
 import soundfile as sf
 from pathlib import Path
 from pyannote.audio import Pipeline
+
 #Paso 1: Diarización
 print("Carpeta actual:", os.getcwd())
 PATH_TO_CONFIG = "pyannote\config.yaml"
@@ -85,7 +91,7 @@ for speech_turn, _, speaker in diarization.itertracks(yield_label=True):
 
     # Extraer el segmento de audio
     segment_audio = audio[start_sample:end_sample]
-    segment_path = f"{output_folder}\segment_{speaker}_{speech_turn.start:.2f}_{speech_turn.end:.2f}.wav"
+    segment_path = os.path.join(output_folder, f"segment_{speaker}_{speech_turn.start:.2f}_{speech_turn.end:.2f}.wav")
     sf.write(segment_path, segment_audio, sr)
 
     segments.append((segment_path, speaker))
@@ -106,7 +112,11 @@ transcriptions = []
 
     # Guardar transcripción en lista
     #transcriptions.append((speaker, result['text']))
-result = whisper.transcribe(model,os.path.abspath("audio.wav"))
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+audio_path = os.path.join(script_dir, "audio.wav")
+
+result = model.transcribe(audio_path, verbose=True)
 
 # Guardar las transcripciones en un archivo de texto
 with open("transcription.txt", "w") as txt_file:
