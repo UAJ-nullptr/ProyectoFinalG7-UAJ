@@ -47,7 +47,20 @@ for package in packages:
 print("Instalación completa de todos los paquetes.")
 
 # Añadir ffmpeg al PATH de manera temporal
-os.environ["PATH"] = r"C:\Users\pavip\Desktop\Universidad\ProyectoFinalG7-UAJ\ffmpeg 7.1.1\bin" + os.pathsep + os.environ["PATH"]
+
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+string_to_remove = "ProyectoFinalUAJG7\\Assets\\SubtitleGenerator"
+
+ffmpeg_path = script_dir.replace(string_to_remove, "")
+
+ffmpeg_path = ffmpeg_path + "ffmpeg 7.1.1\\bin"
+
+print(ffmpeg_path)
+
+
+#os.environ["PATH"] = r"C:\Users\pavip\Desktop\Universidad\ProyectoFinalG7-UAJ\ffmpeg 7.1.1\bin" + os.pathsep + os.environ["PATH"]
+os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ["PATH"]
 print("ffmpeg encontrado en:", shutil.which("ffmpeg"))
 
 #Una vez instalados los paquetes, se hace la transcripción
@@ -95,7 +108,7 @@ for speech_turn, _, speaker in diarization.itertracks(yield_label=True):
     sf.write(segment_path, segment_audio, sr)
 
     segments.append((segment_path, speaker))
-    
+
 # Paso 3: Transcripción
 # Cargar el modelo Whisper
 # Cargar el modelo Whisper
@@ -113,7 +126,7 @@ transcriptions = []
     # Guardar transcripción en lista
     #transcriptions.append((speaker, result['text']))
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
+
 audio_path = os.path.join(script_dir, "audio.wav")
 
 result = model.transcribe(audio_path, verbose=True)
@@ -122,3 +135,4 @@ result = model.transcribe(audio_path, verbose=True)
 with open("transcription.txt", "w") as txt_file:
     for speaker, text in transcriptions:
         txt_file.write(f"Speaker {speaker}: {text}\n")
+    txt_file.close()
