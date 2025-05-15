@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,8 +22,9 @@ public class SubtitleController : MonoBehaviour
     [SerializeField] private Button multipleSpeakers;
     [SerializeField] private Dropdown dropdown;
     [SerializeField] private Dropdown lenguage;
-    [SerializeField] private InputField color;
+    [SerializeField] private TMP_InputField color;
     [SerializeField] private Button bold;
+    [SerializeField] private Button italic;
 
     [SerializeField] private List<TMP_FontAsset> fonts;
 
@@ -47,6 +49,41 @@ public class SubtitleController : MonoBehaviour
                 bool isBold = subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().isBold();
                 subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().setBold(!isBold);
             }
+        }
+    }
+
+    public void Italic()
+    {
+        for (int i = 0; i < subtitles.Length; i++)
+        {
+            if (subtitles[i].inUse)
+            {
+                bool isItalic = subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().isItalic();
+                subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().setItalic(!isItalic);
+            }
+        }
+    }
+
+    public void Color()
+    {
+        string[] colorValue = color.text.Split(',');
+        if (colorValue.Length == 4)
+        {
+            float r = float.Parse(colorValue[0], CultureInfo.InvariantCulture.NumberFormat);
+            float g = float.Parse(colorValue[1], CultureInfo.InvariantCulture.NumberFormat);
+            float b = float.Parse(colorValue[2], CultureInfo.InvariantCulture.NumberFormat);
+            float a = float.Parse(colorValue[3], CultureInfo.InvariantCulture.NumberFormat);
+
+            for (int i = 0; i < subtitles.Length; i++)
+            {
+                if (subtitles[i].inUse)
+                    subtitles[i].subtitleObj.GetComponent<SubtitleComponent>()
+                        .setColor(new Color(r, g, b, a));
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Invalid or incomplete format. Use: R, G, B, A [0 - 1]");
         }
     }
 
