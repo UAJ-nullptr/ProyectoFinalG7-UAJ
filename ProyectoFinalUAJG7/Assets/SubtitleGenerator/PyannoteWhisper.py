@@ -35,7 +35,8 @@ packages = [
     "einops>=0.6.1",
     "pytorch-lightning>=2.0.0",
     "pyannote.core>=5.0.0",
-    "soundfile>=0.11.0"
+    "soundfile>=0.11.0",
+    "ffmpeg-python"
 ]
 
 # Instalar todos los paquetes
@@ -98,13 +99,14 @@ model = whisper.load_model("base")  # Puedes elegir el modelo "base", "small", "
 transcriptions = []
 
 # Procesar cada segmento y transcribir
-for segment, speaker in segments:
-    print(os.path.abspath(segment))
+#for segment, speaker in segments:
     # Transcribir el segmento de audio
-    result = model.transcribe(os.path.abspath(segment))
+    #result = whisper.transcribe(model,os.path.abspath("audio.wav"))
+    #result = model.transcribe(os.path.abspath("audio.wav"))
 
     # Guardar transcripción en lista
-    transcriptions.append((speaker, result['text']))
+    #transcriptions.append((speaker, result['text']))
+result = whisper.transcribe(model,os.path.abspath("audio.wav"))
 
 # Guardar las transcripciones en un archivo de texto
 with open("transcription.txt", "w") as txt_file:
