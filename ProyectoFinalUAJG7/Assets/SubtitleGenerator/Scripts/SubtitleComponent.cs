@@ -4,13 +4,13 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-public struct SubtitleInfo
-{
-    public string talker;
-    public string content;
-    public int startTime;
-    public int endTime;
-}
+//public struct SubtitleInfo
+//{
+//    public string talker;
+//    public string content;
+//    public int startTime;
+//    public int endTime;
+//}
 
 public class SubtitleComponent : MonoBehaviour
 {
@@ -32,7 +32,7 @@ public class SubtitleComponent : MonoBehaviour
     [SerializeField]
     private bool multipleSpeakers = false;
 
-    public void setText(SubtitleInfo subInfo)
+    public void setText(SubtitleManager.SubtitleInfo subInfo)
     {
         textComponent.text = multipleSpeakers ? "-" + subInfo.content : subInfo.content;
     }
