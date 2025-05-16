@@ -71,6 +71,7 @@ import librosa
 import soundfile as sf
 from pathlib import Path
 from pyannote.audio import Pipeline
+from whisper.utils import get_writer
 
 #Paso 1: Diarización
 print("Carpeta actual:", os.getcwd())
@@ -79,7 +80,7 @@ pipeline = Pipeline.from_pretrained(PATH_TO_CONFIG)
 # Cargar el pipeline de diarización de pyannote
 
 # Procesar el archivo de audio (Habrá que editarlo para que reciba la path desde la ventana)
-audio_file = 'audio.wav' # PathToAudio
+audio_file = 'firewatch.wav' # PathToAudio
 diarization = pipeline({'uri': 'audio', 'audio': audio_file})
 
 # Por si se quiere mostrar los resultados de la diarización (marcas de tiempo y hablantes)
@@ -107,32 +108,39 @@ for speech_turn, _, speaker in diarization.itertracks(yield_label=True):
     segment_path = os.path.join(output_folder, f"segment_{speaker}_{speech_turn.start:.2f}_{speech_turn.end:.2f}.wav")
     sf.write(segment_path, segment_audio, sr)
 
-    segments.append((segment_path, speaker))
+    segments.append((segment_path, speaker,speech_turn.start,speech_turn.end))
 
 # Paso 3: Transcripción
 # Cargar el modelo Whisper
 # Cargar el modelo Whisper
-model = whisper.load_model("base")  # Puedes elegir el modelo "base", "small", "medium", "large"
+model = whisper.load_model("medium")  # Puedes elegir el modelo "base", "small", "medium", "large"
 
 # Lista para almacenar las transcripciones
 transcriptions = []
+srt_writer = get_writer("srt", ".")
+srt_segments = []
 
 # Procesar cada segmento y transcribir
-#for segment, speaker in segments:
+for segment, speaker, start, end in segments:
     # Transcribir el segmento de audio
-    #result = whisper.transcribe(model,os.path.abspath("audio.wav"))
+    result = whisper.transcribe(model,os.path.abspath(segment))
     #result = model.transcribe(os.path.abspath("audio.wav"))
+    srt_segments.append({
+        'start': start,
+        'end': end,
+        'text': f"Speaker {speaker}: {result['text']}"
+    })
 
-    # Guardar transcripción en lista
-    #transcriptions.append((speaker, result['text']))
+srt_writer({'segments': srt_segments}, audio_file)
 
 
-audio_path = os.path.join(script_dir, "audio.wav")
+#audio_path = os.path.join(script_dir, "audio.wav")
 
-result = model.transcribe(audio_path, verbose=True)
+#result = model.transcribe(audio_path, verbose=True)
 
 # Guardar las transcripciones en un archivo de texto
-with open("transcription.txt", "w") as txt_file:
-    for speaker, text in transcriptions:
-        txt_file.write(f"Speaker {speaker}: {text}\n")
-    txt_file.close()
+#with open("transcription.txt", "w") as txt_file:
+#    for speaker, text in transcriptions:
+#        txt_file.write(f"Speaker {speaker}: {text}\n")
+#    txt_file.close()
+
