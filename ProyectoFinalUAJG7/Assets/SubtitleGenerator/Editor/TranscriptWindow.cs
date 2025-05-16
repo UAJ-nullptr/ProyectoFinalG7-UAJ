@@ -1,3 +1,4 @@
+using Codice.CM.Client.Differences.Graphic;
 using Codice.CM.Common.Tree;
 using System;
 using System.Collections;
@@ -10,6 +11,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
+
+
 public class TranscriptWindow : EditorWindow
 {
     // Elementos de la UI de la ventana en orden de aparicion
@@ -21,7 +24,7 @@ public class TranscriptWindow : EditorWindow
     private UnityEngine.UIElements.Button exportButton;
     private UnityEngine.UIElements.Button deleteButton;
     private TextField transcriptText;
-
+    private DialogueManager dialogueManager;
     // Audio a procesar
     private AudioClip audioToTranscript;
 
@@ -92,15 +95,19 @@ public class TranscriptWindow : EditorWindow
         if (audioToTranscript != null) {
             Debug.Log("Processing...");
             // Llamar al metodo de Pyhton
+            var pythonSRT = 3;
+
+
+
 
             // Escribir en el apartado del texto
-            transcriptText.value = "escribir lo de Python";
+            //transcriptText.value = "escribir lo de Python";
 
             // Rellenar el dropdown de actores con la informacion pertinente
-            List<string> testList = new List<string> { "Opción A", "Opción B", "Opción C" };
-            FillActors(testList);
+            //List<string> testList = new List<string> { "Opción A", "Opción B", "Opción C" };
+            //FillActors(testList);
 
-            Debug.Log("Processed");
+            //Debug.Log("Processed");
         }
     }
 

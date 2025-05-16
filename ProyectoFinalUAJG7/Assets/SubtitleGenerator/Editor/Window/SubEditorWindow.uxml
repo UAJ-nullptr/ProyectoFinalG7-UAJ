@@ -1,4 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:Template name="TranscriptDialogueLine" />
     <Style src="project://database/Assets/SubtitleGenerator/Editor/Style/TranscriptStyle.uss?fileID=7433441132597879392&amp;guid=ccf30f7ae400f7e498d2a857cf8ac2d8&amp;type=3#TranscriptStyle" />
     <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" />
     <ui:VisualElement name="MainGrid" style="flex-grow: 1; flex-direction: row;">
@@ -15,7 +16,8 @@
         </ui:VisualElement>
         <ui:VisualElement name="transcriptViewer" style="flex-grow: 1;">
             <ui:VisualElement name="transcriptView" style="flex-grow: 1; height: 100%;">
-                <ui:TextField picking-mode="Ignore" value="filler text" name="transcript" multiline="true" style="align-items: stretch; justify-content: space-between; flex-direction: row; align-self: stretch; height: auto; min-height: 100%;" />
+                <ui:ListView />
+                <ui:Instance template="TranscriptDialogueLine" name="TranscriptDialogueLine" />
             </ui:VisualElement>
         </ui:VisualElement>
     </ui:VisualElement>

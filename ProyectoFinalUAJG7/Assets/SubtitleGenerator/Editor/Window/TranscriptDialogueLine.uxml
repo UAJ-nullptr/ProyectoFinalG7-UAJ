@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:VisualElement style="flex-grow: 1;">
+        <ui:VisualElement style="flex-grow: 1; flex-direction: row-reverse; align-self: stretch; max-height: 15px; justify-content: flex-end;">
+            <ui:Button text="Button" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+            <ui:DropdownField style="justify-content: flex-start; align-items: stretch; flex-direction: row; align-self: auto;" />
+            <uie:ToolbarSpacer style="width: 156px;" />
+            <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" name="LineID" style="flex-direction: column; justify-content: flex-start;" />
+        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1;">
+            <ui:VisualElement style="flex-grow: 1; flex-direction: row; flex-basis: initial; max-height: 15px;">
+                <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+                <ui:Label tabindex="-1" text="Label" parse-escape-sequences="true" display-tooltip-when-elided="true" />
+            </ui:VisualElement>
+            <ui:TextField picking-mode="Ignore" value="filler text" multiline="true" hide-mobile-input="false" style="max-height: none; min-height: 65%;" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
