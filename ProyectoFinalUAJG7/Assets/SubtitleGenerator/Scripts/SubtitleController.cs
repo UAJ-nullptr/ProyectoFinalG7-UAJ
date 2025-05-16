@@ -18,6 +18,8 @@ public class SubtitleController : MonoBehaviour
     [SerializeField] private GameObject subtitlesSpeakerTwo;
     public usingSubtitles[] subtitles = new usingSubtitles[3];
 
+    private bool optionsActivated;
+    [SerializeField] private GameObject optionsContainer;
     [SerializeField] private Button activateAll;
     [SerializeField] private Button multipleSpeakers;
     [SerializeField] private Dropdown dropdown;
@@ -39,6 +41,8 @@ public class SubtitleController : MonoBehaviour
                 subtitles[i].subtitleObj.SetActive(!isActive);
             }
         }
+        optionsActivated = !optionsActivated;
+        optionsContainer.SetActive(optionsActivated);
     }
 
     public void Bold()
@@ -109,6 +113,22 @@ public class SubtitleController : MonoBehaviour
         }
     }
 
+    public void OnFontChanged(int value)
+    {
+        for (int i = 0; i < subtitles.Length; i++)
+        {
+            subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().setFont(fonts[value]);
+        }
+    }
+
+    public void OnStyleChanged(int value)
+    {
+        for (int i = 0; i < subtitles.Length; i++)
+        {
+            subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().setBackgroundOpacity(1 - 0.5f * value);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -118,8 +138,14 @@ public class SubtitleController : MonoBehaviour
         subtitles[0].inUse = true;
         subtitles[1].inUse = false;
         subtitles[2].inUse = false;
+        subtitles[0].subtitleObj.SetActive(false);
         subtitles[1].subtitleObj.SetActive(false);
         subtitles[2].subtitleObj.SetActive(false);
+        optionsContainer.SetActive(false);
+        optionsActivated = false;
+
+        subtitles[0].subtitleObj.GetComponent<SubtitleComponent>().setColor(new Color(1, 1, 1, 1));
+        OnStyleChanged(0);
     }
 
     // Update is called once per frame
