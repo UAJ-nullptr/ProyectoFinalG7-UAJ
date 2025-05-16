@@ -16,9 +16,12 @@ public class SubtitleComponent : MonoBehaviour
 {
     // Components
     private TextMeshProUGUI textComponent;
+    private RectTransform textRect;
     private Image backgroundImage;
+    private RectTransform backgroundRect;
 
     // Propiedades del texto
+    private Vector3 anchorPosition;
     [SerializeField]
     private TMP_FontAsset fontAsset;
     [SerializeField]
@@ -39,7 +42,14 @@ public class SubtitleComponent : MonoBehaviour
     #region Setters
     public void setText(SubtitleManager.SubtitleInfo subInfo)
     {
+        transform.position = anchorPosition;
         textComponent.text = multipleSpeakers ? "-" + subInfo.content : subInfo.content;
+
+        float textCanvasWidth = textComponent.preferredWidth;
+        float textCanvasHeight = textComponent.preferredHeight;
+
+        textRect.sizeDelta = new Vector2(textCanvasWidth, textCanvasHeight);
+        backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, textCanvasHeight - 60);
     }
 
     public void setFont(TMP_FontAsset f)
@@ -102,6 +112,7 @@ public class SubtitleComponent : MonoBehaviour
     {
         // Text
         textComponent = transform.GetChild(1).GetComponent<TextMeshProUGUI>();
+        textRect = textComponent.GetComponent<RectTransform>();
         setFont(fontAsset);
         setColor(color);
         setSize(size);
@@ -110,8 +121,11 @@ public class SubtitleComponent : MonoBehaviour
 
         // Image
         backgroundImage = transform.GetChild(0).GetComponent<Image>();
+        backgroundRect = backgroundImage.GetComponent<RectTransform>();
         setBackground(background);
         setBackgroundOpacity(backgroundOpacity);
+
+        anchorPosition = transform.position;
     }
 
     // Update is called once per frame

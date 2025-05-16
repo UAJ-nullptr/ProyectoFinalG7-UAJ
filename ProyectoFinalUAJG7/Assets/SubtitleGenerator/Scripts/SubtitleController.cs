@@ -25,6 +25,7 @@ public class SubtitleController : MonoBehaviour
     [SerializeField] private TMP_InputField color;
     [SerializeField] private Button bold;
     [SerializeField] private Button italic;
+    [SerializeField] private Button background;
 
     [SerializeField] private List<TMP_FontAsset> fonts;
 
@@ -84,6 +85,18 @@ public class SubtitleController : MonoBehaviour
         else
         {
             Debug.LogWarning("Invalid or incomplete format. Use: R, G, B, A [0 - 1]");
+        }
+    }
+
+    public void Background()
+    {
+        for (int i = 0; i < subtitles.Length; i++)
+        {
+            if(subtitles[i].inUse)
+            {
+                bool hasBg = subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().hasBackground();
+                subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().setBackground(!hasBg);
+            }
         }
     }
 
