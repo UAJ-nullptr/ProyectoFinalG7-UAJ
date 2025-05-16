@@ -4,14 +4,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-//public struct SubtitleInfo
-//{
-//    public string talker;
-//    public string content;
-//    public int startTime;
-//    public int endTime;
-//}
-
 public class SubtitleComponent : MonoBehaviour
 {
     // Components
@@ -50,15 +42,15 @@ public class SubtitleComponent : MonoBehaviour
         float textCanvasWidth = textComponent.preferredWidth;
         //float textCanvasHeight = textComponent.preferredHeight;
 
-        Vector2 tamañoTexto = textComponent.GetRenderedValues(false);
+        Vector2 textSize = textComponent.GetRenderedValues(false);
 
         if (textCanvasWidth > maxWidth)
         {
             textCanvasWidth = maxWidth;
         }
 
-        textRect.sizeDelta = new Vector2(textCanvasWidth + 40, tamañoTexto.y);
-        backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, tamañoTexto.y);
+        textRect.sizeDelta = new Vector2(textCanvasWidth + 40, textSize.y);
+        backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, textSize.y);
     }
 
     public void setFont(TMP_FontAsset f)

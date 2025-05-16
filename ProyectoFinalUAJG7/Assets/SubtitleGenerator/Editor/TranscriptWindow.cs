@@ -24,9 +24,11 @@ public class TranscriptWindow : EditorWindow
     private UnityEngine.UIElements.Button exportButton;
     private UnityEngine.UIElements.Button deleteButton;
     private TextField transcriptText;
-    private DialogueManager dialogueManager;
+    private ScrollView scrollView;
+
     // Audio a procesar
     private AudioClip audioToTranscript;
+    private DialogueManager dialogueManager;
 
     // Añadir al menú contextual y abrir ventana
     // Se hace en "Tools" porque Unity obliga a que sea en esa pestaña por consistencia
@@ -60,6 +62,7 @@ public class TranscriptWindow : EditorWindow
         exportButton = root.Q<UnityEngine.UIElements.Button>("exportButton");
         deleteButton = root.Q<UnityEngine.UIElements.Button>("deleteButton");
         transcriptText = root.Q<TextField>("transcript");
+        scrollView = root.Q<ScrollView>("transcriptElements");
 
         // Asignar callbacks
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
@@ -95,10 +98,10 @@ public class TranscriptWindow : EditorWindow
         if (audioToTranscript != null) {
             Debug.Log("Processing...");
             // Llamar al metodo de Pyhton
-            var pythonSRT = 3;
+            //var pythonSRT = 3;
 
-
-
+            // Método que expondrá en la ventana los dialogos
+            ExposeTranscriptElements();
 
             // Escribir en el apartado del texto
             //transcriptText.value = "escribir lo de Python";
@@ -107,8 +110,24 @@ public class TranscriptWindow : EditorWindow
             //List<string> testList = new List<string> { "Opción A", "Opción B", "Opción C" };
             //FillActors(testList);
 
-            //Debug.Log("Processed");
+            Debug.Log("Processed");
         }
+    }
+
+    private void ExposeTranscriptElements()
+    {
+        Debug.Log("Hola");
+        VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+            "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
+
+        // TO-DO -> que se añadan los verdaderos rellenando la info real
+        for (int i = 0; i < 3; i++)
+        {
+            Debug.Log(scrollView);
+            VisualElement newDialog = dialogLineAsset.CloneTree();
+            scrollView.Add(newDialog);
+        }
+
     }
 
     // Rellenara los actores segun la lista recibida
