@@ -39,6 +39,8 @@ public class SubtitleComponent : MonoBehaviour
     [SerializeField]
     private bool multipleSpeakers = false;
 
+    private int maxWidth = 1250;
+
     #region Setters
     public void setText(SubtitleManager.SubtitleInfo subInfo)
     {
@@ -46,10 +48,17 @@ public class SubtitleComponent : MonoBehaviour
         textComponent.text = multipleSpeakers ? "-" + subInfo.content : subInfo.content;
 
         float textCanvasWidth = textComponent.preferredWidth;
-        float textCanvasHeight = textComponent.preferredHeight;
+        //float textCanvasHeight = textComponent.preferredHeight;
 
-        textRect.sizeDelta = new Vector2(textCanvasWidth, textCanvasHeight);
-        backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, textCanvasHeight - 60);
+        Vector2 tamañoTexto = textComponent.GetRenderedValues(false);
+
+        if (textCanvasWidth > maxWidth)
+        {
+            textCanvasWidth = maxWidth;
+        }
+
+        textRect.sizeDelta = new Vector2(textCanvasWidth + 40, tamañoTexto.y);
+        backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, tamañoTexto.y);
     }
 
     public void setFont(TMP_FontAsset f)

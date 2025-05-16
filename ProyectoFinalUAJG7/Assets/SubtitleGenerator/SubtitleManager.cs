@@ -66,7 +66,16 @@ public class SubtitleManager : MonoBehaviour
 
     public void readTextSRT()
     {
-        StreamReader reader = new StreamReader(instance.path);
+        StreamReader reader;
+
+        try
+        {
+            reader = new StreamReader(instance.path);
+        }
+        catch (Exception) {
+            Debug.LogError("Archivo no encontrado: " + instance.path);
+            return;
+        }
 
         SubtitleInfo subtitleInfo = new SubtitleInfo();
         subtitleInfo.startTime = 0;
@@ -84,16 +93,22 @@ public class SubtitleManager : MonoBehaviour
                 string[] parts = line.Split(new string[] { " --> " }, StringSplitOptions.None);
                 if (parts.Length == 2)
                 {
-                    //subtitleInfo.startTime = parts[0].Trim();
-                    //subtitleInfo.endTime = parts[1].Trim();
-
-                    // Cambio de formato
+                    // Cambio de formato para el tiempo
                     TimeSpan time = TimeSpan.ParseExact(parts[0].Trim(), @"hh\:mm\:ss\,fff", CultureInfo.InvariantCulture);
                     int totalMilliseconds = (int)time.TotalMilliseconds;
                     subtitleInfo.startTime = totalMilliseconds;
                     time = TimeSpan.ParseExact(parts[1].Trim(), @"hh\:mm\:ss\,fff", CultureInfo.InvariantCulture);
                     totalMilliseconds = (int)time.TotalMilliseconds;
                     subtitleInfo.endTime = totalMilliseconds;
+                }
+            }
+            else if (line.Contains("Speaker")) // Si la línea contiene Speaker se asigna speaker
+            {
+                int colonIndex = line.IndexOf(':');
+                if (colonIndex > 0)
+                {
+                    subtitleInfo.talker = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
+                    subtitleInfo.content = line.Substring(colonIndex+1).Trim();
                 }
             }
             else if (line != "\n" && line.Length > 1) // Si no contiene el tiempo ni es un salto de línea es el contenido
@@ -140,7 +155,15 @@ public class SubtitleManager : MonoBehaviour
 
     public void readTextWebVTT()
     {
-        StreamReader reader = new StreamReader(instance.path);
+        try
+        {
+            StreamReader reader = new StreamReader(instance.path);
+        }
+        catch (Exception)
+        {
+            Debug.LogError("Archivo no encontrado: " + instance.path);
+            return;
+        }
 
         SubtitleInfo subtitleInfo = new SubtitleInfo();
         subtitleInfo.startTime = 0;
@@ -202,24 +225,6 @@ public class SubtitleManager : MonoBehaviour
     void Start()
     {
         readTextSRT();
-        //readTextJSON();
-        //readTextWebVTT();
-
-        //SubtitleInfo subtitleInfo = new SubtitleInfo();
-
-        //subtitleInfo.talker = "";
-        //subtitleInfo.content = "Hola esto es una prueba";
-        //subtitleInfo.startTime = "0";
-        //subtitleInfo.endTime = "5";
-
-        //subtitles.Add(subtitleInfo);
-
-        //subtitleInfo.talker = "";
-        //subtitleInfo.content = "y continua";
-        //subtitleInfo.startTime = "5";
-        //subtitleInfo.endTime = "10";
-
-        //subtitles.Add(subtitleInfo);
     }
 
     // Update is called once per frame
