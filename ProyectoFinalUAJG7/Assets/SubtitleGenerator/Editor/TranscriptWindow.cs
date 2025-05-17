@@ -31,6 +31,7 @@ public class TranscriptWindow : EditorWindow
 
     // Audio a procesar
     private AudioClip audioToTranscript;
+    private VideoClip videoToTranscript;
     private DialogueManager dialogueManager;
     private Dialogue currentDia;
 
@@ -84,23 +85,19 @@ public class TranscriptWindow : EditorWindow
     private void AudioSelected(ChangeEvent<UnityEngine.Object> evt)
     {
         var value = evt.newValue;
-        if (value is AudioClip || value is VideoClip)
+        if (value is AudioClip)
         {
-            string path = AssetDatabase.GetAssetPath((AudioClip)evt.newValue);
-            if (!path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
-            {
-                UnityEngine.Debug.LogWarning("Only .wav files are allowed to be transcribed.");
-                audioToTranscript = null;
-            }
-            else
-            {
-                audioToTranscript = (AudioClip)evt.newValue;
-                UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
-            }
+            audioToTranscript = (AudioClip) evt.newValue;
+            UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
+        }
+        else if (value is VideoClip)
+        {
+            videoToTranscript = (VideoClip) evt.newValue;
+            UnityEngine.Debug.Log("\"" + videoToTranscript.name + "\" setted correctly.");
         }
         else
         {
-            UnityEngine.Debug.LogWarning("Only AudioClips or VideoClips accepted");
+            UnityEngine.Debug.LogWarning("Only AudioClips or VideoClips are accepted");
             audioToTranscript = null;
         }
         
@@ -121,20 +118,20 @@ public class TranscriptWindow : EditorWindow
         }
     }
 
-    // Metodo que llama a Wisper y compañia para entonces mostrarlo en el TextField
+    // Metodo que llama a Whisper y compañia para entonces mostrarlo en el TextField
     private void ProcessAudio()
     {
         UnityEngine.Debug.Log("Process");
-        if (audioToTranscript != null) {
+        if (audioToTranscript != null || videoToTranscript != null) {
             UnityEngine.Debug.Log("Processing...");
 
             // Llamar al metodo de Pyhton
-            //var pythonSRT = 3;
             string venvPath = Path.GetFullPath("myENV"); // Carpeta del entorno virtual
             string pythonExe = Path.Combine(venvPath, "Scripts", "python.exe"); // Python del entorno virtual
             string scriptDir = Path.GetFullPath("./Assets/SubtitleGenerator");   // Carpeta donde está el script de Python
             string scriptName = "PyannoteWhisper.py";
-            string audioPath = Path.GetFullPath(AssetDatabase.GetAssetPath(audioToTranscript));
+            string audioPath = Path.GetFullPath(AssetDatabase.GetAssetPath(
+                audioToTranscript != null ? audioToTranscript : videoToTranscript));
 
             if (!File.Exists(pythonExe))
             {
@@ -166,13 +163,6 @@ public class TranscriptWindow : EditorWindow
             // Método que expondrá en la ventana los dialogos
             ExposeTranscriptElements();
 
-            // Escribir en el apartado del texto
-            //transcriptText.value = "escribir lo de Python";
-
-            // Rellenar el dropdown de actores con la informacion pertinente
-            //List<string> testList = new List<string> { "Opción A", "Opción B", "Opción C" };
-            //FillActors(testList);
-
             UnityEngine.Debug.Log("Processed");
         }
     }
@@ -188,7 +178,6 @@ public class TranscriptWindow : EditorWindow
             process.StartInfo.UseShellExecute = false;
             process.StartInfo.CreateNoWindow = false;
             
-
             process.Start();
 
             if (!useShell)
@@ -208,7 +197,7 @@ public class TranscriptWindow : EditorWindow
 
     private void ExposeTranscriptElements()
     {
-        UnityEngine.Debug.Log("Hola");
+        UnityEngine.Debug.Log("Mostrando texto obtenido");
         VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
             "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
 
@@ -220,17 +209,6 @@ public class TranscriptWindow : EditorWindow
             scrollView.Add(newDialog);
         }
 
-    }
-
-    // Rellenara los actores segun la lista recibida
-    private void FillActors(List<string> actors)
-    {
-        actorsFoldout.Clear();
-
-        foreach (string actor in actors) {
-            var actorTextField = new TextField(actor);
-            actorsFoldout.Add(actorTextField);
-        }
     }
 
     // Guardar la transcripcion
