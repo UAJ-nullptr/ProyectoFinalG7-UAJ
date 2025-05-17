@@ -41,8 +41,11 @@ public class SubtitleController : MonoBehaviour
                 subtitles[i].subtitleObj.SetActive(!isActive);
             }
         }
-        optionsActivated = !optionsActivated;
-        optionsContainer.SetActive(optionsActivated);
+        if (optionsContainer != null)
+        {
+            optionsActivated = !optionsActivated;
+            optionsContainer.SetActive(optionsActivated);
+        }
     }
 
     public void Bold()
@@ -141,7 +144,8 @@ public class SubtitleController : MonoBehaviour
         subtitles[0].subtitleObj.SetActive(false);
         subtitles[1].subtitleObj.SetActive(false);
         subtitles[2].subtitleObj.SetActive(false);
-        optionsContainer.SetActive(false);
+
+        if (optionsContainer != null) optionsContainer.SetActive(false);
         optionsActivated = false;
 
         subtitles[0].subtitleObj.GetComponent<SubtitleComponent>().setColor(new Color(1, 1, 1, 1));
