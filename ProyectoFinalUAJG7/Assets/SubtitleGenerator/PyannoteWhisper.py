@@ -1,28 +1,14 @@
 import os
 import subprocess
 import shutil
-
+import sys
 # Función para instalar un paquete
 def install_package(package):
     try:
-        subprocess.check_call(["pip", "install", package])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         print(f"{package} instalado correctamente.")
     except subprocess.CalledProcessError:
         print(f"Error al instalar {package}.")
-
-# Crear un entorno virtual
-env_name = "Transcription_env"
-print(f"Creando entorno virtual: {env_name}")
-subprocess.run(["python", "-m", "venv", env_name])
-
-# Activar el entorno virtual
-if os.name == "nt":
-    activate_script = os.path.join(env_name, "Scripts", "activate")
-else:
-    activate_script = os.path.join(env_name, "bin", "activate")
-
-print(f"Activando entorno virtual: {activate_script}")
-subprocess.run(["source", activate_script], shell=True)
 
 # Paquetes necesarios
 packages = [
@@ -41,6 +27,7 @@ packages = [
 ]
 
 # Instalar todos los paquetes
+#subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
 for package in packages:
     install_package(package)
 
@@ -80,7 +67,7 @@ pipeline = Pipeline.from_pretrained(PATH_TO_CONFIG)
 # Cargar el pipeline de diarización de pyannote
 
 # Procesar el archivo de audio (Habrá que editarlo para que reciba la path desde la ventana)
-audio_file = 'firewatch.wav' # PathToAudio
+audio_file = sys.argv[1] # PathToAudio
 diarization = pipeline({'uri': 'audio', 'audio': audio_file})
 
 # Por si se quiere mostrar los resultados de la diarización (marcas de tiempo y hablantes)

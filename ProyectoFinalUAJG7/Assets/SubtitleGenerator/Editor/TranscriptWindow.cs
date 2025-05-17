@@ -1,4 +1,4 @@
-using Codice.CM.Client.Differences.Graphic;
+Ôªøusing Codice.CM.Client.Differences.Graphic;
 using Codice.CM.Common.Tree;
 using System;
 using System.Collections;
@@ -32,8 +32,8 @@ public class TranscriptWindow : EditorWindow
     private AudioClip audioToTranscript;
     private DialogueManager dialogueManager;
 
-    // AÒadir al men˙ contextual y abrir ventana
-    // Se hace en "Tools" porque Unity obliga a que sea en esa pestaÒa por consistencia
+    // A√±adir al men√∫ contextual y abrir ventana
+    // Se hace en "Tools" porque Unity obliga a que sea en esa pesta√±a por consistencia
     // en la AssetStore
     [MenuItem("Tools/Transcript Audio Tool")]
     public static void OpenEditorWindow()
@@ -76,7 +76,7 @@ public class TranscriptWindow : EditorWindow
         UnityEngine.Debug.Log("GUI created.");
     }
 
-    // Metodo para cuando se aÒade el audio
+    // Metodo para cuando se a√±ade el audio
     private void AudioSelected(ChangeEvent<UnityEngine.Object> evt)
     {
         UnityEngine.Debug.Log("Audio");
@@ -93,7 +93,7 @@ public class TranscriptWindow : EditorWindow
         }
     }
 
-    // Metodo que llama a Wisper y compaÒia para entonces mostrarlo en el TextField
+    // Metodo que llama a Wisper y compa√±ia para entonces mostrarlo en el TextField
     private void ProcessAudio()
     {
         UnityEngine.Debug.Log("Process");
@@ -102,21 +102,21 @@ public class TranscriptWindow : EditorWindow
 
             // Llamar al metodo de Pyhton
             //var pythonSRT = 3;
-            string venvPath = Path.GetFullPath("./Assets/SubtitleGenerator/myENV"); // Carpeta del entorno virtual
+            string venvPath = Path.GetFullPath("myENV"); // Carpeta del entorno virtual
             string pythonExe = Path.Combine(venvPath, "Scripts", "python.exe"); // Python del entorno virtual
-            string scriptDir = Path.GetFullPath("./Assets/SubtitleGenerator");   // Carpeta donde est· el script de Python
+            string scriptDir = Path.GetFullPath("./Assets/SubtitleGenerator");   // Carpeta donde est√° el script de Python
             string scriptName = "PyannoteWhisper.py";
-            string audioPath = AssetDatabase.GetAssetPath(audioToTranscript);
+            string audioPath = Path.GetFullPath(AssetDatabase.GetAssetPath(audioToTranscript));
 
             if (!File.Exists(pythonExe))
             {
-                UnityEngine.Debug.LogError("No se encontrÛ el ejecutable de Python en el entorno virtual.");
+                UnityEngine.Debug.LogError("No se encontr√≥ el ejecutable de Python en el entorno virtual.");
                 return;
             }
 
             if (!File.Exists(Path.Combine(scriptDir, scriptName)))
             {
-                UnityEngine.Debug.LogError("No se encontrÛ el script de Python.");
+                UnityEngine.Debug.LogError("No se encontr√≥ el script de Python.");
                 return;
             }
 
@@ -135,14 +135,14 @@ public class TranscriptWindow : EditorWindow
             // Podemos dejar definida la carpeta donde se va a encontrar el SRT hardcodeado
             // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas
 
-            // MÈtodo que expondr· en la ventana los dialogos
+            // M√©todo que expondr√° en la ventana los dialogos
             ExposeTranscriptElements();
 
             // Escribir en el apartado del texto
             //transcriptText.value = "escribir lo de Python";
 
             // Rellenar el dropdown de actores con la informacion pertinente
-            //List<string> testList = new List<string> { "OpciÛn A", "OpciÛn B", "OpciÛn C" };
+            //List<string> testList = new List<string> { "Opci√≥n A", "Opci√≥n B", "Opci√≥n C" };
             //FillActors(testList);
 
             UnityEngine.Debug.Log("Processed");
@@ -184,7 +184,7 @@ public class TranscriptWindow : EditorWindow
         VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
             "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
 
-        // TO-DO -> que se aÒadan los verdaderos rellenando la info real
+        // TO-DO -> que se a√±adan los verdaderos rellenando la info real
         for (int i = 0; i < 3; i++)
         {
             UnityEngine.Debug.Log(scrollView);
