@@ -109,7 +109,7 @@ public class SubtitleComponent : MonoBehaviour
     #endregion
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         // Text
         textComponent = transform.GetChild(1).GetComponent<TextMeshProUGUI>();

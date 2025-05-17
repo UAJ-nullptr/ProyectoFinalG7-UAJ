@@ -23,14 +23,14 @@ public class PlayerSubtitleComponent : MonoBehaviour
     
     void Start()
     {
-        activateText = "Press A to activate subtitles";
-        deactivateText = "Press A to deactivate subtitles";
+        activateText = "Press E to activate subtitles";
+        deactivateText = "Press E to deactivate subtitles";
         subtitlesOn = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.A)) ChangeSubtitles();
+        if (Input.GetKeyUp(KeyCode.E)) ChangeSubtitles();
     }
 }
