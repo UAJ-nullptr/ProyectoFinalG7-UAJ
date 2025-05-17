@@ -12,6 +12,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using UnityEngine.Video;
 
 
 
@@ -57,7 +58,6 @@ public class TranscriptWindow : EditorWindow
 
         // Guardar los elementos
         audioFileInput = root.Q<UnityEditor.UIElements.ObjectField>("audioField");
-        audioFileInput.objectType = typeof(AudioClip);
         processButton = root.Q<UnityEngine.UIElements.Button>("process");
         fileInfoInput = root.Q<UnityEditor.UIElements.ObjectField>("fileInfo");
         actorsFoldout = root.Q<Foldout>("actors");
@@ -83,18 +83,27 @@ public class TranscriptWindow : EditorWindow
     // Metodo para cuando se añade el audio
     private void AudioSelected(ChangeEvent<UnityEngine.Object> evt)
     {
-        UnityEngine.Debug.Log("Audio");
-        string path = AssetDatabase.GetAssetPath((AudioClip)evt.newValue);
-        if (!path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+        var value = evt.newValue;
+        if (value is AudioClip || value is VideoClip)
         {
-            UnityEngine.Debug.LogWarning("Only .wav files are allowed to be transcribed.");
-            audioToTranscript = null;
+            string path = AssetDatabase.GetAssetPath((AudioClip)evt.newValue);
+            if (!path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
+            {
+                UnityEngine.Debug.LogWarning("Only .wav files are allowed to be transcribed.");
+                audioToTranscript = null;
+            }
+            else
+            {
+                audioToTranscript = (AudioClip)evt.newValue;
+                UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
+            }
         }
         else
         {
-            audioToTranscript = (AudioClip)evt.newValue;
-            UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
+            UnityEngine.Debug.LogWarning("Only AudioClips or VideoClips accepted");
+            audioToTranscript = null;
         }
+        
     }
 
     private void generateValuesDebug()
