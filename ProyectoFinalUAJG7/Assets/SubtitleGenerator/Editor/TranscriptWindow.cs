@@ -1,8 +1,10 @@
-using Codice.CM.Client.Differences.Graphic;
+Ôªøusing Codice.CM.Client.Differences.Graphic;
 using Codice.CM.Common.Tree;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using UnityEditor;
 using UnityEditor.Search;
 using UnityEditor.UI;
@@ -30,8 +32,8 @@ public class TranscriptWindow : EditorWindow
     private AudioClip audioToTranscript;
     private DialogueManager dialogueManager;
 
-    // AÒadir al men˙ contextual y abrir ventana
-    // Se hace en "Tools" porque Unity obliga a que sea en esa pestaÒa por consistencia
+    // A√±adir al men√∫ contextual y abrir ventana
+    // Se hace en "Tools" porque Unity obliga a que sea en esa pesta√±a por consistencia
     // en la AssetStore
     [MenuItem("Tools/Transcript Audio Tool")]
     public static void OpenEditorWindow()
@@ -71,59 +73,121 @@ public class TranscriptWindow : EditorWindow
         exportButton.clicked += ExportTranscript;
         deleteButton.clicked += DeleteOptions;
 
-        Debug.Log("GUI created.");
+        UnityEngine.Debug.Log("GUI created.");
     }
 
-    // Metodo para cuando se aÒade el audio
+    // Metodo para cuando se a√±ade el audio
     private void AudioSelected(ChangeEvent<UnityEngine.Object> evt)
     {
-        Debug.Log("Audio");
+        UnityEngine.Debug.Log("Audio");
         string path = AssetDatabase.GetAssetPath((AudioClip)evt.newValue);
         if (!path.EndsWith(".wav", StringComparison.OrdinalIgnoreCase))
         {
-            Debug.LogWarning("Only .wav files are allowed to be transcribed.");
+            UnityEngine.Debug.LogWarning("Only .wav files are allowed to be transcribed.");
             audioToTranscript = null;
         }
         else
         {
             audioToTranscript = (AudioClip)evt.newValue;
-            Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
+            UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
         }
     }
 
-    // Metodo que llama a Wisper y compaÒia para entonces mostrarlo en el TextField
+    // Metodo que llama a Wisper y compa√±ia para entonces mostrarlo en el TextField
     private void ProcessAudio()
     {
-        Debug.Log("Process");
+        UnityEngine.Debug.Log("Process");
         if (audioToTranscript != null) {
-            Debug.Log("Processing...");
+            UnityEngine.Debug.Log("Processing...");
+
             // Llamar al metodo de Pyhton
             //var pythonSRT = 3;
+            string venvPath = Path.GetFullPath("myENV"); // Carpeta del entorno virtual
+            string pythonExe = Path.Combine(venvPath, "Scripts", "python.exe"); // Python del entorno virtual
+            string scriptDir = Path.GetFullPath("./Assets/SubtitleGenerator");   // Carpeta donde est√° el script de Python
+            string scriptName = "PyannoteWhisper.py";
+            string audioPath = Path.GetFullPath(AssetDatabase.GetAssetPath(audioToTranscript));
 
-            // MÈtodo que expondr· en la ventana los dialogos
+            if (!File.Exists(pythonExe))
+            {
+                UnityEngine.Debug.LogError("No se encontr√≥ el ejecutable de Python en el entorno virtual.");
+                return;
+            }
+
+            if (!File.Exists(Path.Combine(scriptDir, scriptName)))
+            {
+                UnityEngine.Debug.LogError("No se encontr√≥ el script de Python.");
+                return;
+            }
+
+            //// 1. Crear entorno virtual
+            //RunCommand($"{pythonExe} -m venv {venvPath}", scriptDir, true);
+
+            //// 2. Activar el entorno virtual
+            //string activateCmd = Path.Combine(venvPath, "Scripts", "activate");
+            //RunCommand($"{activateCmd}", scriptDir, true);
+
+            string pythonCmd = $"{scriptName}"; /*{arguments}*/
+
+            // 3. Correr el archivo de python
+            RunCommand(pythonExe, $"\"{scriptName}\" \"{audioPath}\"", scriptDir);
+
+            // Podemos dejar definida la carpeta donde se va a encontrar el SRT hardcodeado
+            // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas
+
+            // M√©todo que expondr√° en la ventana los dialogos
             ExposeTranscriptElements();
 
             // Escribir en el apartado del texto
             //transcriptText.value = "escribir lo de Python";
 
             // Rellenar el dropdown de actores con la informacion pertinente
-            //List<string> testList = new List<string> { "OpciÛn A", "OpciÛn B", "OpciÛn C" };
+            //List<string> testList = new List<string> { "Opci√≥n A", "Opci√≥n B", "Opci√≥n C" };
             //FillActors(testList);
 
-            Debug.Log("Processed");
+            UnityEngine.Debug.Log("Processed");
+        }
+    }
+    private void RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
+    {
+        using (Process process = new Process())
+        {
+            process.StartInfo.WorkingDirectory = workingDirectory;
+            process.StartInfo.FileName = executer;
+            process.StartInfo.Arguments = $"{command}";
+            process.StartInfo.RedirectStandardOutput = true;
+            process.StartInfo.RedirectStandardError = true;
+            process.StartInfo.UseShellExecute = false;
+            process.StartInfo.CreateNoWindow = false;
+            
+
+            process.Start();
+
+            if (!useShell)
+            {
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+                UnityEngine.Debug.Log("Salida:");
+                UnityEngine.Debug.Log(output);
+                UnityEngine.Debug.LogError("Error:");
+                UnityEngine.Debug.LogError(error);
+            }
+
+            process.WaitForExit();
         }
     }
 
+
     private void ExposeTranscriptElements()
     {
-        Debug.Log("Hola");
+        UnityEngine.Debug.Log("Hola");
         VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
             "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
 
-        // TO-DO -> que se aÒadan los verdaderos rellenando la info real
+        // TO-DO -> que se a√±adan los verdaderos rellenando la info real
         for (int i = 0; i < 3; i++)
         {
-            Debug.Log(scrollView);
+            UnityEngine.Debug.Log(scrollView);
             VisualElement newDialog = dialogLineAsset.CloneTree();
             scrollView.Add(newDialog);
         }
@@ -144,7 +208,7 @@ public class TranscriptWindow : EditorWindow
     // Guardar la transcripcion
     private void SaveTranscript()
     {
-        Debug.Log("Save");
+        UnityEngine.Debug.Log("Save");
         if (transcriptText.value != null)
         {
             // Guardar en un archivo?
@@ -154,7 +218,7 @@ public class TranscriptWindow : EditorWindow
     // Exportar la transcripcion
     private void ExportTranscript()
     {
-        Debug.Log("Export");
+        UnityEngine.Debug.Log("Export");
         if (transcriptText.value != null)
         {
             // Guardar en un archivo... otra vez?
@@ -164,7 +228,7 @@ public class TranscriptWindow : EditorWindow
     // Setea la interfaz y su info a los valores iniciales
     private void DeleteOptions()
     {
-        Debug.Log("Delete");
+        UnityEngine.Debug.Log("Delete");
         transcriptText.value = null;
         audioToTranscript = null;
     }
