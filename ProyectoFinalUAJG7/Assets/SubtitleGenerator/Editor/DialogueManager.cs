@@ -20,7 +20,7 @@ public struct Line
 
 public struct Actor
 {
-    public Actor(int lol = 0)
+    public Actor(int unused = 0)
     {
         name = "";
         color = Color.white;
@@ -33,7 +33,7 @@ public struct Actor
 
 public struct Dialogue
 {
-    public Dialogue(string name = "")
+    public Dialogue(int unused = 0)
     {
         actors = new();
         lines = new();

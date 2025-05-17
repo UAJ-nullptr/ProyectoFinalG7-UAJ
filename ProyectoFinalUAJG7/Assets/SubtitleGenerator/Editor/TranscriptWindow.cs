@@ -31,6 +31,7 @@ public class TranscriptWindow : EditorWindow
     // Audio a procesar
     private AudioClip audioToTranscript;
     private DialogueManager dialogueManager;
+    private Dialogue currentDia;
 
     // Añadir al menú contextual y abrir ventana
     // Se hace en "Tools" porque Unity obliga a que sea en esa pestaña por consistencia
@@ -68,7 +69,10 @@ public class TranscriptWindow : EditorWindow
 
         // Asignar callbacks
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
+
         processButton.clicked += ProcessAudio;
+        //processButton.clicked += generateValuesDebug;
+
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
         deleteButton.clicked += DeleteOptions;
@@ -90,6 +94,21 @@ public class TranscriptWindow : EditorWindow
         {
             audioToTranscript = (AudioClip)evt.newValue;
             UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
+        }
+    }
+
+    private void generateValuesDebug()
+    {
+        string srtPath = "./Assets/SubtitleGenerator/firewatch.srt";
+        currentDia = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
+
+        VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
+            "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
+
+        foreach (var dia in currentDia.lines) {
+            VisualElement newDialog = dialogLineAsset.CloneTree();
+            
+            scrollView.Add(newDialog);
         }
     }
 
