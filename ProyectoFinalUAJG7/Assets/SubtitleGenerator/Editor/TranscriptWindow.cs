@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.Search;
 using UnityEditor.UI;
@@ -34,7 +35,7 @@ public class TranscriptWindow : EditorWindow
     private AudioClip audioToTranscript;
     private VideoClip videoToTranscript;
     private DialogueManager dialogueManager;
-    private Dialogue currentDia;
+    private Dialogue currentDiag;
 
     // Añadir al menú contextual y abrir ventana
     // Se hace en "Tools" porque Unity obliga a que sea en esa pestaña por consistencia
@@ -44,7 +45,7 @@ public class TranscriptWindow : EditorWindow
     {
         TranscriptWindow window = GetWindow<TranscriptWindow>();
         window.titleContent = new GUIContent("Transcript Audio Tool");
-        window.maxSize = new Vector2(600, 500);
+        window.maxSize = new Vector2(900, 700);
         window.minSize = window.maxSize;
     }
 
@@ -72,8 +73,8 @@ public class TranscriptWindow : EditorWindow
         // Asignar callbacks
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
 
-        processButton.clicked += ProcessAudio;
-        //processButton.clicked += ExposeTranscriptElements;
+        //processButton.clicked += ProcessAudio;
+        processButton.clicked += ExposeTranscriptElements;
 
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
@@ -190,11 +191,11 @@ public class TranscriptWindow : EditorWindow
     {
         UnityEngine.Debug.Log("Mostrando texto obtenido");
         string srtPath = "./Assets/SubtitleGenerator/Tests/prueba4.txt"; // -> esto debería pasar como parámetro
-        currentDia = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
+        currentDiag = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
 
         actorsFoldout.Clear();
         List<string> actorsNamesList = new List<string>();
-        foreach (var actor in currentDia.actors)
+        foreach (var actor in currentDiag.actors)
         {
             TextField actorField = new TextField(actor.Key);
             actorField.RegisterValueChangedCallback(evt =>
@@ -210,27 +211,35 @@ public class TranscriptWindow : EditorWindow
         VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
             "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
 
-        foreach (var dia in currentDia.lines)
+        foreach (var line in currentDiag.lines)
         {
             // TO-DO: Guardar esto en una lista de clases contenedores donde estén las referencias
             // a los distintos elementos para su posterior modificación 
-            VisualElement newDialog = dialogLineAsset.CloneTree();
 
-            Label actorName = newDialog.Q<Label>("lineID");
-            DropdownField actorDrop = newDialog.Q<DropdownField>("actor");
-            TextField lineField = newDialog.Q<TextField>("lineField");
-            Label startTimeLabel = newDialog.Q<Label>("startTime");
-            Label endTimeLabel = newDialog.Q<Label>("endTime");
+            TranscriptDialogueLine newDiag = CreateInstance<TranscriptDialogueLine>();
+            newDiag.PopulateDialogueLine(line, currentDiag, actorsNamesList);
+            newDiag.CreateGUI();
+            UnityEngine.Debug.Log(newDiag.rootVisualElement);
+            scrollView.contentContainer.Add(newDiag.rootVisualElement);
+            //VisualElement newDiag = dialogLineAsset.CloneTree();
 
-            actorName.text = "> " + dia.actorKey;
-            actorDrop.choices = actorsNamesList;
-            actorDrop.value = dia.actorKey;
-            lineField.value = dia.line;
-            startTimeLabel.text = "Start: " + (dia.startTime / 1000f).ToString("R");
-            endTimeLabel.text = " - End: " + (dia.endTime / 1000f).ToString("R");
+            //Label actorName = newDiag.Q<Label>("lineID");
+            //DropdownField actorDrop = newDiag.Q<DropdownField>("actor");
+            //TextField lineField = newDiag.Q<TextField>("lineField");
+            //Label startTimeLabel = newDiag.Q<Label>("startTime");
+            //Label endTimeLabel = newDiag.Q<Label>("endTime");
 
-            scrollView.Add(newDialog);
+            //actorName.text = "> " + line.actorKey;
+            //actorDrop.choices = actorsNamesList;
+            //actorDrop.value = line.actorKey;
+            //lineField.value = line.line;
+            //startTimeLabel.text = "Start: " + (line.startTime / 1000f).ToString("R");
+            //endTimeLabel.text = " - End: " + (line.endTime / 1000f).ToString("R");
+
+            //scrollView.Add(newDiag);
         }
+
+
     }
 
     // Guardar la transcripcion
@@ -264,5 +273,7 @@ public class TranscriptWindow : EditorWindow
     private void changeSpeakers(TextField tf, string defaultName, string newName) { 
         tf.label = newName;
         // TO-DO: Modificar de la template el label y el dropdown, y actualizar en la estructura la info
+        var list = scrollView.Query<VisualElement>(className: nameof(TranscriptDialogueLine)).ToList();
+        var item = list.ElementAt(INDEX);
     }
 }

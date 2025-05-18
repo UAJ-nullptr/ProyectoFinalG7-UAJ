@@ -1,24 +1,34 @@
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
+using static SubtitleManager;
 
 public class TranscriptDialogueLine : EditorWindow
 {
     public Line lineRef;
     public Dialogue dialogueRef;
+    public List<string> actorNames;
+
 
     TextField lineField;
     Label startTimeLabel;
     Label endTimeLabel;
+    Label actorLabel;
+
+    Label actorName;
+    DropdownField actorDrop;
 
 
     [SerializeField]
     private VisualTreeAsset m_VisualTreeAsset = default;
 
-    public void PopulateDialogueLine(Line line, Dialogue dialogue)
+    public void PopulateDialogueLine(Line line, Dialogue dialogue, List<string> names)
     {
         lineRef = line;
         dialogueRef = dialogue;
+        actorNames = names;
+
     }
 
     [MenuItem("Window/SubtitleGenerator/DEBUG/TranscriptDialogueLine")]
@@ -26,12 +36,6 @@ public class TranscriptDialogueLine : EditorWindow
     {
         TranscriptDialogueLine wnd = GetWindow<TranscriptDialogueLine>();
         wnd.titleContent = new GUIContent("TranscriptDialogueLine");        
-    }
-
-    public void OnValidate()
-    {
-        lineRef.line = lineField.value;
-        Debug.Log(lineRef.line);
     }
 
     public void CreateGUI()
@@ -48,11 +52,11 @@ public class TranscriptDialogueLine : EditorWindow
         startTimeLabel = root.Q<Label>("startTime");
         endTimeLabel = root.Q<Label>("endTime");
 
-        lineRef = new Line();
-
-        lineRef.line = "esto es una unidade de prueba";
-        lineRef.endTime = 3;
-        lineRef.startTime = 0;
+        actorName = root.Q<Label>("lineID");
+        actorDrop = root.Q<DropdownField>("actor");
+        lineField = root.Q<TextField>("lineField");
+        startTimeLabel = root.Q<Label>("startTime");
+        endTimeLabel = root.Q<Label>("endTime");
 
         UpdateFields();
     }
@@ -64,6 +68,13 @@ public class TranscriptDialogueLine : EditorWindow
             lineField.value = lineRef.line;
             startTimeLabel.text = lineRef.startTime.ToString();
             endTimeLabel.text = lineRef.endTime.ToString();
+
+            actorName.text = "> " + lineRef.actorKey;
+            actorDrop.choices = actorNames;
+            actorDrop.value = lineRef.actorKey;
+            lineField.value = lineRef.line;
+            startTimeLabel.text = "Start: " + (lineRef.startTime / 1000f).ToString("R");
+            endTimeLabel.text = " - End: " + (lineRef.endTime / 1000f).ToString("R");
         }
     }
 }
