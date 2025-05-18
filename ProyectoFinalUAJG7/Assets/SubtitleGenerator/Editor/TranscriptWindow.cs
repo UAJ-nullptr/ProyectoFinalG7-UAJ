@@ -131,7 +131,7 @@ public class TranscriptWindow : EditorWindow
             // Llamar al metodo de Pyhton
             string venvPath = Path.GetFullPath("myENV"); // Carpeta del entorno virtual
             string pythonExe = Path.Combine(venvPath, "Scripts", "python.exe"); // Python del entorno virtual
-            string scriptDir = Path.GetFullPath("./Assets/SubtitleGenerator");   // Carpeta donde está el script de Python
+            string scriptDir = Path.GetFullPath("./Assets/SubtitleGenerator/Python");   // Carpeta donde está el script de Python
             string scriptName = "PyannoteWhisper.py";
             string inputPath = Path.GetFullPath(AssetDatabase.GetAssetPath(
                 audioToTranscript != null ? audioToTranscript : videoToTranscript));

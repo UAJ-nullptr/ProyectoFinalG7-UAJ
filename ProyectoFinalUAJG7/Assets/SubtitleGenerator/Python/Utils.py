@@ -35,7 +35,9 @@ def video_to_audio(video_path, new_audio_path):
     try:
         subprocess.run(
             ["ffmpeg", "-y", "-i", video_path, "-vn", "-acodec", "pcm_s16le", "-ar", "16000", "-ac", "1", new_audio_path],
-            check=True
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True
         )
         print(f"Audio extraído a {new_audio_path}")
     except subprocess.CalledProcessError as e:
