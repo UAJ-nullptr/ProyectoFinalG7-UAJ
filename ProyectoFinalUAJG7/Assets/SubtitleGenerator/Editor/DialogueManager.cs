@@ -93,7 +93,7 @@ public class DialogueManager
                     {
                         List<Line> listAux = SplitPhrases(line.Substring(colonIndex + 1).Trim(), (int)newLine.startTime, (int)newLine.endTime);
 
-                        for (int i = 0; i < listAux.Count-1; i++)
+                        for (int i = 0; i < listAux.Count - 1; i++)
                         {
                             // Se añade el segmento a la lista de súbtitulos
                             newLine = listAux[i];
@@ -134,7 +134,8 @@ public class DialogueManager
                 newLine = new();
             }
         }
-        
+        // Se añade el segmento a la lista de súbtitulos si termina, para recoger la ultima linea
+        dialogue.lines.Add(newLine);
         reader.Close();
 
         return dialogue;

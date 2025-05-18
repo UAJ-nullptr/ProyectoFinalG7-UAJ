@@ -274,6 +274,6 @@ public class TranscriptWindow : EditorWindow
         tf.label = newName;
         // TO-DO: Modificar de la template el label y el dropdown, y actualizar en la estructura la info
         var list = scrollView.Query<VisualElement>(className: nameof(TranscriptDialogueLine)).ToList();
-        var item = list.ElementAt(INDEX);
+        
     }
 }
