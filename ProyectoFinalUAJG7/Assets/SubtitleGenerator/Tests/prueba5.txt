@@ -1,0 +1,43 @@
+1
+00:00:01,000 --> 00:00:02,500
+ALEX: Alright. Best of three?
+
+2
+00:00:01,800 --> 00:00:02,800
+JAMIE: You’re going down.
+
+3
+00:00:03,000 --> 00:00:05,000
+BOTH: Rock... paper... scissors!
+
+4
+00:00:05,100 --> 00:00:06,200
+JAMIE: Ha! Scissors beats paper!
+
+5
+00:00:05,300 --> 00:00:06,300
+ALEX: What?! Again?
+
+6
+00:00:06,500 --> 00:00:07,200
+JAMIE: One–zero!
+
+7
+00:00:07,300 --> 00:00:08,800
+ALEX: Rematch now. Come on.
+
+8
+00:00:09,000 --> 00:00:11,000
+BOTH: Rock... paper... scissors!
+
+9
+00:00:11,100 --> 00:00:12,000
+ALEX: Tie.
+
+10
+00:00:11,300 --> 00:00:12,300
+JAMIE: Tie! Go again!
+
+11
+00:00:12,500 --> 00:00:14,500
+BOTH: Rock... paper... scissors!

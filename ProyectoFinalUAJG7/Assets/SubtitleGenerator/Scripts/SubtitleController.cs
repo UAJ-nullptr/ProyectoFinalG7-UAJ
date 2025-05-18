@@ -19,6 +19,7 @@ public class SubtitleController : MonoBehaviour
     public usingSubtitles[] subtitles = new usingSubtitles[3];
 
     private bool optionsActivated;
+    public bool multipleSpeakersActivated = false;
     [SerializeField] private GameObject optionsContainer;
     [SerializeField] private Button activateAll;
     [SerializeField] private Button multipleSpeakers;
@@ -28,11 +29,13 @@ public class SubtitleController : MonoBehaviour
     [SerializeField] private Button bold;
     [SerializeField] private Button italic;
     [SerializeField] private Button background;
+    [SerializeField] private SubtitleManager subtitleManager;
 
     [SerializeField] private List<TMP_FontAsset> fonts;
 
     public void Activate()
     {
+        subtitleManager.ChangeState();
         for (int i = 0; i < subtitles.Length; i++)
         {
             if (subtitles[i].inUse)
@@ -141,6 +144,9 @@ public class SubtitleController : MonoBehaviour
         subtitles[0].inUse = true;
         subtitles[1].inUse = false;
         subtitles[2].inUse = false;
+
+        if (multipleSpeakersActivated) MultipleSpeakers();
+
         subtitles[0].subtitleObj.SetActive(false);
         subtitles[1].subtitleObj.SetActive(false);
         subtitles[2].subtitleObj.SetActive(false);
@@ -148,7 +154,8 @@ public class SubtitleController : MonoBehaviour
         if (optionsContainer != null) optionsContainer.SetActive(false);
         optionsActivated = false;
 
-        subtitles[0].subtitleObj.GetComponent<SubtitleComponent>().setColor(new Color(1, 1, 1, 1));
+        for (int i = 0; i < subtitles.Length; i++) 
+            subtitles[i].subtitleObj.GetComponent<SubtitleComponent>().setColor(new Color(1, 1, 1, 1));
         OnStyleChanged(0);
     }
 

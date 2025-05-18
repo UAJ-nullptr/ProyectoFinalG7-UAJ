@@ -993,6 +993,7 @@ MonoBehaviour:
   subtitlesSpeaker: {fileID: 1548528862}
   subtitlesSpeakerOne: {fileID: 336525056}
   subtitlesSpeakerTwo: {fileID: 387902801}
+  multipleSpeakersActivated: 1
   optionsContainer: {fileID: 0}
   activateAll: {fileID: 0}
   multipleSpeakers: {fileID: 0}
@@ -1002,6 +1003,7 @@ MonoBehaviour:
   bold: {fileID: 0}
   italic: {fileID: 0}
   background: {fileID: 0}
+  subtitleManager: {fileID: 2082978864}
   fonts: []
 --- !u!4 &263949038
 Transform:
@@ -2045,7 +2047,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Press E to activate subtitles
+  m_text: Press Q to activate subtitles
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -3787,7 +3789,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42180d65d802b13408861976b32a071d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/SubtitleGenerator/prueba4.txt
+  path: Assets/SubtitleGenerator/Tests/prueba5.txt
   subtitleComponent: {fileID: 1548528863}
   subtitleComponentSpeaker1: {fileID: 336525057}
   subtitleComponentSpeaker2: {fileID: 387902803}
@@ -3872,6 +3874,6 @@ SceneRoots:
   - {fileID: 448068463}
   - {fileID: 1568408997}
   - {fileID: 1737723845}
-  - {fileID: 2082978865}
   - {fileID: 263949038}
+  - {fileID: 2082978865}
   - {fileID: 217967179}

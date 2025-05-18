@@ -3674,6 +3674,7 @@ MonoBehaviour:
   subtitlesSpeaker: {fileID: 713882790}
   subtitlesSpeakerOne: {fileID: 1294893687}
   subtitlesSpeakerTwo: {fileID: 403228860}
+  multipleSpeakersActivated: 0
   optionsContainer: {fileID: 2105180538}
   activateAll: {fileID: 1308584826}
   multipleSpeakers: {fileID: 321760152}
@@ -3683,6 +3684,7 @@ MonoBehaviour:
   bold: {fileID: 1721036300}
   italic: {fileID: 936533809}
   background: {fileID: 1463507173}
+  subtitleManager: {fileID: 1224074224}
   fonts:
   - {fileID: 11400000, guid: 9132188815329a24f9ad3c18715cbd20, type: 2}
   - {fileID: 11400000, guid: 1ea333bec59df6e49bd78b4ca236e375, type: 2}

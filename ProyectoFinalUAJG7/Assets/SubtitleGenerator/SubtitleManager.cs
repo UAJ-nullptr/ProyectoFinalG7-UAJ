@@ -56,9 +56,12 @@ public class SubtitleManager : MonoBehaviour
     int cont = 0;
 
     List<SubtitleInfo> subtitles = new List<SubtitleInfo>();
+
+    private bool subtitlesActivated;
     #endregion
 
     #region methods
+    public void ChangeState() { subtitlesActivated = !subtitlesActivated; }
     public void resetTime() { time = 0; }
     public void setTime(float nTime) { time = nTime; }
     public float getTime() { return time; }
@@ -274,41 +277,49 @@ public class SubtitleManager : MonoBehaviour
     void Start()
     {
         readTextSRT();
+        subtitlesActivated = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         time += Time.deltaTime;
         // Comprobamos que inicia el hablante
         if (cont < subtitles.Count && subtitles[cont].startTime < time * 1000)
         {
             if(cont+1 < subtitles.Count && subtitles[cont+1].startTime < time * 1000) // Dos hablantes
             {
-                // Descativamos el texto individual
-                subtitleComponent.gameObject.SetActive(false);
-                
-                // Activamos los textos de los dos hablantes
-                subtitleComponentSpeaker1.gameObject.SetActive(true);
-                subtitleComponentSpeaker2.gameObject.SetActive(true);
+                if (subtitlesActivated)
+                {
+                    // Descativamos el texto individual
+                    subtitleComponent.gameObject.SetActive(false);
 
-                // Colocamos los nuevos textos para los dos hablantes
-                subtitleComponentSpeaker1.setText(subtitles[cont]);
-                subtitleComponentSpeaker2.setText(subtitles[cont + 1]);
+                    // Activamos los textos de los dos hablantes
+                    subtitleComponentSpeaker1.gameObject.SetActive(true);
+                    subtitleComponentSpeaker2.gameObject.SetActive(true);
+
+                    // Colocamos los nuevos textos para los dos hablantes
+                    subtitleComponentSpeaker1.setText(subtitles[cont]);
+                    subtitleComponentSpeaker2.setText(subtitles[cont + 1]);
+                }
 
                 cont++; 
             }
             else // Un solo hablante
             {
-                // Desactivamos los textos de los dos hablantes
-                subtitleComponentSpeaker1.gameObject.SetActive(false);
-                subtitleComponentSpeaker2.gameObject.SetActive(false);
-               
-                // Activamos el texto individual
-                subtitleComponent.gameObject.SetActive(true);
+                if (subtitlesActivated)
+                {
+                    // Desactivamos los textos de los dos hablantes
+                    subtitleComponentSpeaker1.gameObject.SetActive(false);
+                    subtitleComponentSpeaker2.gameObject.SetActive(false);
 
-                // Colocamos el nuevo texto
-                subtitleComponent.setText(subtitles[cont]);
+                    // Activamos el texto individual
+                    subtitleComponent.gameObject.SetActive(true);
+
+                    // Colocamos el nuevo texto
+                    subtitleComponent.setText(subtitles[cont]);
+                }
             }
             cont++;
         }
