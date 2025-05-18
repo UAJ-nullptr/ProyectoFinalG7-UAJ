@@ -1,9 +1,9 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:Template name="TranscriptDialogLine" src="project://database/Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml?fileID=9197481963319205126&amp;guid=03341ab001cfc2b43bcc69301133d0e9&amp;type=3#TranscriptDialogLine" />
     <Style src="project://database/Assets/SubtitleGenerator/Editor/Style/TranscriptStyle.uss?fileID=7433441132597879392&amp;guid=ccf30f7ae400f7e498d2a857cf8ac2d8&amp;type=3#TranscriptStyle" />
-    <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" />
+    <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" style="height: 35px;" />
     <ui:VisualElement name="MainGrid" style="flex-grow: 1; flex-direction: row;">
-        <ui:VisualElement name="FileConfig" style="flex-grow: 1; height: 100%; width: 70%;">
+        <ui:VisualElement name="FileConfig" style="flex-grow: 1; height: 100%; width: 80%;">
             <uie:ObjectField label="Audio File" name="audioField" style="margin-bottom: 5px;" />
             <ui:Button text="Process" parse-escape-sequences="true" display-tooltip-when-elided="true" name="process" style="margin-bottom: 0;" />
             <uie:ObjectField label="File Info" name="fileInfo" />
@@ -14,10 +14,9 @@
                 <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="deleteButton" style="flex-grow: 1; height: 20px;" />
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="transcriptViewer" style="flex-grow: 1;">
-            <ui:ScrollView scroll-deceleration-rate="0,135" elasticity="0,1" name="transcriptElements">
-                <ui:Instance template="TranscriptDialogLine" name="TranscriptDialogLine" />
-            </ui:ScrollView>
-        </ui:VisualElement>
+        <ui:VisualElement style="flex-grow: 1; margin-right: 2px; background-color: rgb(208, 208, 208); margin-left: 2px; width: 2px;" />
+        <ui:ScrollView scroll-deceleration-rate="0,135" elasticity="0,1" name="transcriptElements" style="flex-direction: column;">
+            <ui:Instance template="TranscriptDialogLine" name="TranscriptDialogLine" />
+        </ui:ScrollView>
     </ui:VisualElement>
 </ui:UXML>

@@ -23,14 +23,3 @@
     padding-bottom: 8px;
     padding-left: 5px;
 }
-
-#transcript {
-    height: 150px;
-    -unity-text-align: upper-left;
-    margin: 4px;
-    padding: 8px;
-    background-color: rgb(46, 46, 46);
-    color: white;
-    border-radius: 4px;
-    -unity-text-align: middle-left;
-}

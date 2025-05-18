@@ -43,7 +43,6 @@ public class TranscriptDialogueLine : EditorWindow
         VisualElement labelFromUXML = visualTree.Instantiate();
         root.Add(labelFromUXML);
 
-
         // Each editor window contains a root VisualElement object
         lineField = root.Q<TextField>("lineField");
         startTimeLabel = root.Q<Label>("startTime");
@@ -56,7 +55,6 @@ public class TranscriptDialogueLine : EditorWindow
         lineRef.startTime = 0;
 
         UpdateFields();
-
     }
 
     public void UpdateFields()
@@ -66,8 +64,6 @@ public class TranscriptDialogueLine : EditorWindow
             lineField.value = lineRef.line;
             startTimeLabel.text = lineRef.startTime.ToString();
             endTimeLabel.text = lineRef.endTime.ToString();
-
-            
         }
     }
 }

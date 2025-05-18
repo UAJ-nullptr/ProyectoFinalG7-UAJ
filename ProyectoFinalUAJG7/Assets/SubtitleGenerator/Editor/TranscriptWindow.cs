@@ -13,6 +13,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.Video;
+using static SubtitleManager;
 
 
 
@@ -43,7 +44,7 @@ public class TranscriptWindow : EditorWindow
     {
         TranscriptWindow window = GetWindow<TranscriptWindow>();
         window.titleContent = new GUIContent("Transcript Audio Tool");
-        window.maxSize = new Vector2(500, 400);
+        window.maxSize = new Vector2(600, 400);
         window.minSize = window.maxSize;
     }
 
@@ -71,12 +72,14 @@ public class TranscriptWindow : EditorWindow
         // Asignar callbacks
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
 
-        processButton.clicked += ProcessAudio;
-        //processButton.clicked += generateValuesDebug;
+        //processButton.clicked += ProcessAudio;
+        processButton.clicked += generateValuesDebug;
 
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
         deleteButton.clicked += DeleteOptions;
+
+        dialogueManager = new DialogueManager();
 
         UnityEngine.Debug.Log("GUI created.");
     }
@@ -103,20 +106,31 @@ public class TranscriptWindow : EditorWindow
             audioToTranscript = null;
             videoToTranscript = null;
         }
-        
     }
 
     private void generateValuesDebug()
     {
-        string srtPath = "./Assets/SubtitleGenerator/firewatch.srt";
-        currentDia = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
+        string srtPath = "./Assets/SubtitleGenerator/Tests/prueba4.txt";
+        currentDia = (Dialogue) dialogueManager.ReadTextSRT(srtPath);
 
+        scrollView.Clear();
         VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
             "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
 
         foreach (var dia in currentDia.lines) {
             VisualElement newDialog = dialogLineAsset.CloneTree();
-            
+
+            TextField actorName = newDialog.Q<TextField>("actorName");
+            DropdownField color = newDialog.Q<DropdownField>("color");
+            TextField lineField = newDialog.Q<TextField>("lineField");
+            Label startTimeLabel = newDialog.Q<Label>("startTime");
+            Label endTimeLabel = newDialog.Q<Label>("endTime");
+
+            actorName.value = dia.actorKey;
+            lineField.value = dia.line;
+            startTimeLabel.text = "Start: " + (dia.startTime / 1000f).ToString("R");
+            endTimeLabel.text = " - End: " + (dia.endTime / 1000f).ToString("R");
+
             scrollView.Add(newDialog);
         }
     }

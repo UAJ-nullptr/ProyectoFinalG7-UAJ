@@ -6,15 +6,13 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 
-
-
 public struct Line
 {
-    public String actorKey;
+    public string actorKey;
     public float startTime;
     public float endTime;
 
-    public String line;
+    public string line;
 
 }
 
@@ -30,22 +28,19 @@ public struct Actor
     public Color color;
 }
 
-
 public struct Dialogue
 {
     public Dialogue(int unused = 0)
     {
-        actors = new();
-        lines = new();
+        actors = new Dictionary<string, Actor>();
+        lines = new List<Line>();
     }
 
 
-    public Dictionary<String, Actor> actors;
+    public Dictionary<string, Actor> actors;
 
     public List<Line> lines;
 }
-
-
 
 public class DialogueManager
 {
@@ -53,7 +48,7 @@ public class DialogueManager
     
     public Dialogue? ReadTextSRT(string path)
     {
-        Dialogue dialogue = new Dialogue();
+        Dialogue dialogue = new Dialogue(0);
 
         StreamReader reader;
 
@@ -67,9 +62,7 @@ public class DialogueManager
             return null;
         }
 
-        
-
-        String line;
+        string line;
         // Procesamos línea por línea
         Line newLine = new();
         while ((line = reader.ReadLine()) != null)
@@ -96,7 +89,7 @@ public class DialogueManager
                 if (colonIndex > 0)
                 {
                                       
-                    String actorKey = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
+                    string actorKey = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
 
                     Actor assignedActor;
 
