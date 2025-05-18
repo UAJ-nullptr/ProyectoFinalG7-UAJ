@@ -88,17 +88,20 @@ public class TranscriptWindow : EditorWindow
         if (value is AudioClip)
         {
             audioToTranscript = (AudioClip) evt.newValue;
+            videoToTranscript = null;
             UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
         }
         else if (value is VideoClip)
         {
             videoToTranscript = (VideoClip) evt.newValue;
+            audioToTranscript = null;
             UnityEngine.Debug.Log("\"" + videoToTranscript.name + "\" setted correctly.");
         }
         else
         {
             UnityEngine.Debug.LogWarning("Only AudioClips or VideoClips are accepted");
             audioToTranscript = null;
+            videoToTranscript = null;
         }
         
     }
@@ -130,7 +133,7 @@ public class TranscriptWindow : EditorWindow
             string pythonExe = Path.Combine(venvPath, "Scripts", "python.exe"); // Python del entorno virtual
             string scriptDir = Path.GetFullPath("./Assets/SubtitleGenerator");   // Carpeta donde está el script de Python
             string scriptName = "PyannoteWhisper.py";
-            string audioPath = Path.GetFullPath(AssetDatabase.GetAssetPath(
+            string inputPath = Path.GetFullPath(AssetDatabase.GetAssetPath(
                 audioToTranscript != null ? audioToTranscript : videoToTranscript));
 
             if (!File.Exists(pythonExe))
@@ -155,7 +158,7 @@ public class TranscriptWindow : EditorWindow
             string pythonCmd = $"{scriptName}"; /*{arguments}*/
 
             // 3. Correr el archivo de python
-            RunCommand(pythonExe, $"\"{scriptName}\" \"{audioPath}\"", scriptDir);
+            RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
 
             // Podemos dejar definida la carpeta donde se va a encontrar el SRT hardcodeado
             // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas

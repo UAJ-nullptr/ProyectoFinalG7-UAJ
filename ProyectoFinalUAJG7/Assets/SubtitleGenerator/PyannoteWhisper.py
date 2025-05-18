@@ -1,14 +1,12 @@
 import os
-import subprocess
 import shutil
 import sys
-# Función para instalar un paquete
-def install_package(package):
-    try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
-        print(f"{package} instalado correctamente.")
-    except subprocess.CalledProcessError:
-        print(f"Error al instalar {package}.")
+import whisper
+import librosa
+import soundfile as sf
+from pyannote.audio import Pipeline
+from whisper.utils import get_writer
+from Utils import install_package, configure_ffmpeg, is_video, video_to_audio
 
 # Paquetes necesarios
 packages = [
@@ -26,55 +24,41 @@ packages = [
     "ffmpeg-python"
 ]
 
+### CONFIGURACION DEL ENTORNO ###
 # Instalar todos los paquetes
-#subprocess.run([sys.executable, "-m", "pip", "install", "--upgrade", "pip"])
 for package in packages:
     install_package(package)
-
 print("Instalación completa de todos los paquetes.")
 
 # Añadir ffmpeg al PATH de manera temporal
-
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-string_to_remove = "ProyectoFinalUAJG7\\Assets\\SubtitleGenerator"
-
-ffmpeg_path = script_dir.replace(string_to_remove, "")
-
-ffmpeg_path = ffmpeg_path + "ffmpeg 7.1.1\\bin"
-
-print(ffmpeg_path)
-
-
-#os.environ["PATH"] = r"C:\Users\pavip\Desktop\Universidad\ProyectoFinalG7-UAJ\ffmpeg 7.1.1\bin" + os.pathsep + os.environ["PATH"]
+ffmpeg_path = configure_ffmpeg()
 os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ["PATH"]
 print("ffmpeg encontrado en:", shutil.which("ffmpeg"))
 
-#Una vez instalados los paquetes, se hace la transcripción
 
-from pyannote.audio.pipelines import SpeakerDiarization
-import whisper
-import librosa
-import soundfile as sf
-from pathlib import Path
-from pyannote.audio import Pipeline
-from whisper.utils import get_writer
-
-#Paso 1: Diarización
+### PROCESO DE TRANSCRIPCION ###
+# Paso 1: Diarización -  Cargar el pipeline de pyannote
 print("Carpeta actual:", os.getcwd())
 PATH_TO_CONFIG = "pyannote\config.yaml"
 pipeline = Pipeline.from_pretrained(PATH_TO_CONFIG)
-# Cargar el pipeline de diarización de pyannote
 
-# Procesar el archivo de audio (Habrá que editarlo para que reciba la path desde la ventana)
-audio_file = sys.argv[1] # PathToAudio
+# Paso 2: Procesar el archivo de input (si es video se transforma a audio)
+input_file = sys.argv[1]
+audio_file = {}
+if (is_video(input_file)):
+    video_name = os.path.splitext(os.path.basename(input_file))[0]
+    video_directory = os.path.dirname(input_file)
+    audio_file = os.path.join(video_directory, video_name + ".wav")
+    video_to_audio(input_file, audio_file)
+else:
+    audio_file = input_file
 diarization = pipeline({'uri': 'audio', 'audio': audio_file})
 
 # Por si se quiere mostrar los resultados de la diarización (marcas de tiempo y hablantes)
 #for speech_turn, _, speaker in diarization.itertracks(yield_label=True):
     #print(f"Speaker {speaker} speaks from {speech_turn.start} to {speech_turn.end}")
 
-#Paso 2: Separación del audio en fragmentos
+# Paso 3: Separación del audio en fragmentos
 # Definir la carpeta de salida
 output_folder = "audio_segments"
 os.makedirs(output_folder, exist_ok=True)
@@ -97,10 +81,9 @@ for speech_turn, _, speaker in diarization.itertracks(yield_label=True):
 
     segments.append((segment_path, speaker,speech_turn.start,speech_turn.end))
 
-# Paso 3: Transcripción
+# Paso 4: Transcripción
 # Cargar el modelo Whisper
-# Cargar el modelo Whisper
-model = whisper.load_model("medium")  # Puedes elegir el modelo "base", "small", "medium", "large"
+model = whisper.load_model("medium")
 
 # Lista para almacenar las transcripciones
 transcriptions = []
@@ -111,7 +94,7 @@ srt_segments = []
 for segment, speaker, start, end in segments:
     # Transcribir el segmento de audio
     result = whisper.transcribe(model,os.path.abspath(segment))
-    #result = model.transcribe(os.path.abspath("audio.wav"))
+    #result = model.transcribe(os.path.abspath("segment"))
     srt_segments.append({
         'start': start,
         'end': end,
@@ -119,15 +102,3 @@ for segment, speaker, start, end in segments:
     })
 
 srt_writer({'segments': srt_segments}, audio_file)
-
-
-#audio_path = os.path.join(script_dir, "audio.wav")
-
-#result = model.transcribe(audio_path, verbose=True)
-
-# Guardar las transcripciones en un archivo de texto
-#with open("transcription.txt", "w") as txt_file:
-#    for speaker, text in transcriptions:
-#        txt_file.write(f"Speaker {speaker}: {text}\n")
-#    txt_file.close()
-
