@@ -54,6 +54,7 @@ public class SubtitleManager : MonoBehaviour
 
     float time = 0;
     int cont = 0;
+    float maxEndTime = 0;
 
     List<SubtitleInfo> subtitles = new List<SubtitleInfo>();
 
@@ -288,7 +289,7 @@ public class SubtitleManager : MonoBehaviour
         // Comprobamos que inicia el hablante
         if (cont < subtitles.Count && subtitles[cont].startTime < time * 1000)
         {
-            if(cont+1 < subtitles.Count && subtitles[cont+1].startTime < time * 1000) // Dos hablantes
+            if(cont+1 < subtitles.Count && subtitles[cont+1].startTime < subtitles[cont].endTime) // Dos hablantes
             {
                 if (subtitlesActivated)
                 {
@@ -303,7 +304,7 @@ public class SubtitleManager : MonoBehaviour
                     subtitleComponentSpeaker1.setText(subtitles[cont]);
                     subtitleComponentSpeaker2.setText(subtitles[cont + 1]);
                 }
-
+                maxEndTime = Math.Max(subtitles[cont].endTime, subtitles[cont+1].endTime);
                 cont++; 
             }
             else // Un solo hablante
@@ -320,12 +321,13 @@ public class SubtitleManager : MonoBehaviour
                     // Colocamos el nuevo texto
                     subtitleComponent.setText(subtitles[cont]);
                 }
+                maxEndTime = subtitles[cont].endTime;
             }
             cont++;
         }
 
         // Si se ha terminado el texto y se ha pasado el tiempo se desactivan los subtítulos
-        if(cont > 0 && cont >= subtitles.Count && subtitles[cont-1].endTime < time * 1000)
+        if(cont > 0 && cont >= subtitles.Count && maxEndTime < time * 1000)
         {
             subtitleComponent.gameObject.SetActive(false);
             subtitleComponentSpeaker1.gameObject.SetActive(false);

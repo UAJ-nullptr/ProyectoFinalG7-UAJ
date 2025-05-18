@@ -17,14 +17,14 @@ public class PlayerSubtitleComponent : MonoBehaviour
     {
         subtitleController.Activate();
         subtitlesOn = !subtitlesOn;
-        if (subtitlesOn) text.text = activateText;
-        else text.text = deactivateText;
+        if (subtitlesOn) text.text = deactivateText;
+        else text.text = activateText;
     }
     
     void Start()
     {
-        activateText = "Press E to activate subtitles";
-        deactivateText = "Press E to deactivate subtitles";
+        activateText = "Press Q to activate subtitles";
+        deactivateText = "Press Q to deactivate subtitles";
         subtitlesOn = false;
     }
 
