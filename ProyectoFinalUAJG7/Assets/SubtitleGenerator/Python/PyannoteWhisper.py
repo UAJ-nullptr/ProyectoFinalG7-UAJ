@@ -1,11 +1,6 @@
 import os
 import shutil
 import sys
-import whisper
-import librosa
-import soundfile as sf
-from pyannote.audio import Pipeline
-from whisper.utils import get_writer
 from Utils import install_package, configure_ffmpeg, is_video, video_to_audio
 
 # Paquetes necesarios
@@ -35,11 +30,16 @@ ffmpeg_path = configure_ffmpeg()
 os.environ["PATH"] = ffmpeg_path + os.pathsep + os.environ["PATH"]
 print("ffmpeg encontrado en:", shutil.which("ffmpeg"))
 
+import whisper
+import librosa
+import soundfile as sf
+from pyannote.audio import Pipeline
+from whisper.utils import get_writer
 
 ### PROCESO DE TRANSCRIPCION ###
 # Paso 1: Diarización -  Cargar el pipeline de pyannote
 print("Carpeta actual:", os.getcwd())
-PATH_TO_CONFIG = "pyannote\config.yaml"
+PATH_TO_CONFIG = os.path.abspath("..\pyannote\config.yaml")
 pipeline = Pipeline.from_pretrained(PATH_TO_CONFIG)
 
 # Paso 2: Procesar el archivo de input (si es video se transforma a audio)
@@ -61,6 +61,9 @@ diarization = pipeline({'uri': 'audio', 'audio': audio_file})
 # Paso 3: Separación del audio en fragmentos
 # Definir la carpeta de salida
 output_folder = "audio_segments"
+# Si existe de un audio anterior, se borra y se crea de nuevo
+if os.path.exists(output_folder) and os.path.isdir(output_folder):
+        shutil.rmtree(output_folder)
 os.makedirs(output_folder, exist_ok=True)
 
 # Cargar el archivo de audio completo

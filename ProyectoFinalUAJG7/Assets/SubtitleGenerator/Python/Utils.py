@@ -12,7 +12,7 @@ def install_package(package):
 
 def configure_ffmpeg():
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    string_to_remove = "ProyectoFinalUAJG7\\Assets\\SubtitleGenerator"
+    string_to_remove = "ProyectoFinalUAJG7\\Assets\\SubtitleGenerator\\Python"
     ffmpeg_path = script_dir.replace(string_to_remove, "")
     ffmpeg_path = ffmpeg_path + "ffmpeg 7.1.1\\bin"
     return ffmpeg_path

@@ -72,8 +72,8 @@ public class TranscriptWindow : EditorWindow
         // Asignar callbacks
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
 
-        //processButton.clicked += ProcessAudio;
-        processButton.clicked += ExposeTranscriptElements;
+        processButton.clicked += ProcessAudio;
+        //processButton.clicked += ExposeTranscriptElements;
 
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
