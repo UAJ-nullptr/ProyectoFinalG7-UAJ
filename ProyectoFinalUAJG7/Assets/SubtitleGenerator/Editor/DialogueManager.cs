@@ -1,10 +1,14 @@
+using Codice.Client.BaseCommands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
 using UnityEngine;
+using static SubtitleManager;
 
 public struct Line
 {
@@ -84,24 +88,39 @@ public class DialogueManager
             {
                 int colonIndex = line.IndexOf(':');
                 if (colonIndex > 0)
-                {
-                                      
-                    string actorKey = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
-
-                    Actor assignedActor;
-
-                    if (dialogue.actors.ContainsKey(actorKey))
+                {                 
+                    if(newLine.endTime - newLine.startTime > 10000)
                     {
-                        assignedActor = dialogue.actors[actorKey];
+                        List<Line> listAux = SplitPhrases(line.Substring(colonIndex + 1).Trim(), (int)newLine.startTime, (int)newLine.endTime);
+
+                        for (int i = 0; i < listAux.Count-1; i++)
+                        {
+                            // Se añade el segmento a la lista de súbtitulos
+                            newLine = listAux[i];
+                            dialogue.lines.Add(newLine);
+                            newLine = new();
+                        }
+                        newLine = listAux[listAux.Count - 1];
                     }
                     else
                     {
-                        assignedActor = new Actor();
-                        dialogue.actors.Add(actorKey, assignedActor);
-                    }
+                        string actorKey = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
 
-                    newLine.actorKey = actorKey;
-                    newLine.line = line.Substring(colonIndex + 1).Trim();
+                        Actor assignedActor;
+
+                        if (dialogue.actors.ContainsKey(actorKey))
+                        {
+                            assignedActor = dialogue.actors[actorKey];
+                        }
+                        else
+                        {
+                            assignedActor = new Actor();
+                            dialogue.actors.Add(actorKey, assignedActor);
+                        }
+
+                        newLine.actorKey = actorKey;
+                        newLine.line = line.Substring(colonIndex + 1).Trim();
+                    }
                 }
             }
             else if (line != "\n" && line.Length > 1) // Si no contiene el tiempo ni es un salto de línea es el contenido
@@ -110,7 +129,6 @@ public class DialogueManager
             }
             else if (line == "")
             {
-
                 // Se añade el segmento a la lista de súbtitulos
                 dialogue.lines.Add(newLine);
                 newLine = new();
@@ -120,5 +138,36 @@ public class DialogueManager
         reader.Close();
 
         return dialogue;
+    }
+
+    List<Line> SplitPhrases(string fullText, int startTime, int endTime)
+    {
+        // Separar los fragmentos utilizando signos de puntuación
+        List<string> sentences = Regex.Split(fullText, @"(?<=[.!?])\s+").ToList();
+
+        // Calculamos las palabras de cada frase para tratar de ajustar el texto al sonido
+        List<int> wordCounts = sentences.Select(s => s.Split(' ').Length).ToList();
+        float totalWords = wordCounts.Sum();
+
+        // En función de la longitud de la frase antes calculada asignamos la duración
+        int currentStart = startTime;
+        List<Line> entries = new List<Line>();
+
+        for (int i = 0; i < sentences.Count; i++)
+        {
+            float fraction = wordCounts[i] / totalWords;
+            int duration = (int)((endTime - startTime) * fraction);
+            int currentEnd = currentStart + duration;
+
+            entries.Add(new Line {
+                line = sentences[i].Trim(),
+                startTime = currentStart,
+                endTime = currentEnd
+            });
+
+            currentStart = currentEnd;
+        }
+
+        return entries;
     }
 }

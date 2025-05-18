@@ -40,17 +40,20 @@ public class SubtitleComponent : MonoBehaviour
         textComponent.text = multipleSpeakers ? "-" + subInfo.content : subInfo.content;
 
         float textCanvasWidth = textComponent.preferredWidth;
-        //float textCanvasHeight = textComponent.preferredHeight;
-
-        Vector2 textSize = textComponent.GetRenderedValues(false);
 
         if (textCanvasWidth > maxWidth)
         {
             textCanvasWidth = maxWidth;
         }
 
-        textRect.sizeDelta = new Vector2(textCanvasWidth + 40, textSize.y);
-        backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, textSize.y);
+        textRect.sizeDelta = new Vector2(textCanvasWidth + 40, textRect.sizeDelta.y);
+
+        Canvas.ForceUpdateCanvases();
+
+        float textCanvasHeight = textComponent.preferredHeight;
+
+        textRect.sizeDelta = new Vector2(textCanvasWidth + 40, textCanvasHeight + 10);
+        backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, textCanvasHeight + 10);
     }
 
     public void setFont(TMP_FontAsset f)

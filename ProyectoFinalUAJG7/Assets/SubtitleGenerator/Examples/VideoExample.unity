@@ -2756,7 +2756,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42180d65d802b13408861976b32a071d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  path: Assets/SubtitleGenerator/prueba4.txt
+  path: Assets/SubtitleGenerator/Tests/prueba4.txt
   subtitleComponent: {fileID: 713882793}
   subtitleComponentSpeaker1: {fileID: 1294893690}
   subtitleComponentSpeaker2: {fileID: 403228862}

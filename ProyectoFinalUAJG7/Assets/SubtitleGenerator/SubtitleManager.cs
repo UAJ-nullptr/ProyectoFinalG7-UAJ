@@ -6,6 +6,9 @@ using System.IO;
 using System;
 using static SubtitleManager;
 using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Linq;
+
 
 public class SubtitleManager : MonoBehaviour
 {
@@ -64,6 +67,37 @@ public class SubtitleManager : MonoBehaviour
     public void setCont(int nCont) { cont = nCont; }
     public float getCont() { return cont; }
 
+    List<SubtitleInfo> SplitPhrases(string fullText, int startTime, int endTime)
+    {
+        // Separar los fragmentos utilizando signos de puntuación
+        List<string> sentences = Regex.Split(fullText, @"(?<=[.!?])\s+").ToList();
+
+        // Calculamos las palabras de cada frase para tratar de ajustar el texto al sonido
+        List<int> wordCounts = sentences.Select(s => s.Split(' ').Length).ToList();
+        float totalWords = wordCounts.Sum();
+
+        // En función de la longitud de la frase antes calculada asignamos la duración
+        int currentStart = startTime;
+        List<SubtitleInfo> entries = new List<SubtitleInfo>();
+
+        for (int i = 0; i < sentences.Count; i++)
+        {
+            float fraction = wordCounts[i] / totalWords;
+            int duration = (int)((endTime - startTime) * fraction);
+            int currentEnd = currentStart + duration;
+
+            entries.Add(new SubtitleInfo {
+                content = sentences[i].Trim(),
+                startTime = currentStart,
+                endTime = currentEnd
+            });
+
+            currentStart = currentEnd;
+        }
+
+        return entries;
+    }
+
     public void readTextSRT()
     {
         StreamReader reader;
@@ -107,8 +141,23 @@ public class SubtitleManager : MonoBehaviour
                 int colonIndex = line.IndexOf(':');
                 if (colonIndex > 0)
                 {
-                    subtitleInfo.talker = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
-                    subtitleInfo.content = line.Substring(colonIndex+1).Trim();
+                    if (subtitleInfo.endTime - subtitleInfo.startTime > 10000)
+                    {
+                        List<SubtitleInfo> listAux = SplitPhrases(line.Substring(colonIndex + 1).Trim(), subtitleInfo.startTime, subtitleInfo.endTime);
+
+                        for (int i = 0; i < listAux.Count - 1; i++)
+                        {
+                            // Se añade el segmento a la lista de súbtitulos
+                            subtitles.Add(listAux[i]);
+                        }
+                        // Se hace está última asignación porque el último fragmento se inserta con normalidad al final
+                        subtitleInfo = listAux[listAux.Count - 1];
+                    }
+                    else
+                    {
+                        subtitleInfo.talker = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
+                        subtitleInfo.content = line.Substring(colonIndex + 1).Trim();
+                    }               
                 }
             }
             else if (line != "\n" && line.Length > 1) // Si no contiene el tiempo ni es un salto de línea es el contenido
@@ -238,12 +287,15 @@ public class SubtitleManager : MonoBehaviour
             {
                 // Descativamos el texto individual
                 subtitleComponent.gameObject.SetActive(false);
-                // Colocamos los nuevos textos para los dos hablantes
-                subtitleComponentSpeaker1.setText(subtitles[cont]);
-                subtitleComponentSpeaker2.setText(subtitles[cont+1]);
+                
                 // Activamos los textos de los dos hablantes
                 subtitleComponentSpeaker1.gameObject.SetActive(true);
                 subtitleComponentSpeaker2.gameObject.SetActive(true);
+
+                // Colocamos los nuevos textos para los dos hablantes
+                subtitleComponentSpeaker1.setText(subtitles[cont]);
+                subtitleComponentSpeaker2.setText(subtitles[cont + 1]);
+
                 cont++; 
             }
             else // Un solo hablante
@@ -251,10 +303,12 @@ public class SubtitleManager : MonoBehaviour
                 // Desactivamos los textos de los dos hablantes
                 subtitleComponentSpeaker1.gameObject.SetActive(false);
                 subtitleComponentSpeaker2.gameObject.SetActive(false);
-                // Colocamos el nuevo texto
-                subtitleComponent.setText(subtitles[cont]);
+               
                 // Activamos el texto individual
                 subtitleComponent.gameObject.SetActive(true);
+
+                // Colocamos el nuevo texto
+                subtitleComponent.setText(subtitles[cont]);
             }
             cont++;
         }
