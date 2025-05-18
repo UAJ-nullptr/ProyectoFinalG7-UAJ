@@ -44,7 +44,7 @@ public class TranscriptWindow : EditorWindow
     {
         TranscriptWindow window = GetWindow<TranscriptWindow>();
         window.titleContent = new GUIContent("Transcript Audio Tool");
-        window.maxSize = new Vector2(600, 400);
+        window.maxSize = new Vector2(600, 500);
         window.minSize = window.maxSize;
     }
 
@@ -73,7 +73,7 @@ public class TranscriptWindow : EditorWindow
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
 
         //processButton.clicked += ProcessAudio;
-        processButton.clicked += generateValuesDebug;
+        processButton.clicked += ExposeTranscriptElements;
 
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
@@ -105,33 +105,6 @@ public class TranscriptWindow : EditorWindow
             UnityEngine.Debug.LogWarning("Only AudioClips or VideoClips are accepted");
             audioToTranscript = null;
             videoToTranscript = null;
-        }
-    }
-
-    private void generateValuesDebug()
-    {
-        string srtPath = "./Assets/SubtitleGenerator/Tests/prueba4.txt";
-        currentDia = (Dialogue) dialogueManager.ReadTextSRT(srtPath);
-
-        scrollView.Clear();
-        VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-            "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
-
-        foreach (var dia in currentDia.lines) {
-            VisualElement newDialog = dialogLineAsset.CloneTree();
-
-            TextField actorName = newDialog.Q<TextField>("actorName");
-            DropdownField color = newDialog.Q<DropdownField>("color");
-            TextField lineField = newDialog.Q<TextField>("lineField");
-            Label startTimeLabel = newDialog.Q<Label>("startTime");
-            Label endTimeLabel = newDialog.Q<Label>("endTime");
-
-            actorName.value = dia.actorKey;
-            lineField.value = dia.line;
-            startTimeLabel.text = "Start: " + (dia.startTime / 1000f).ToString("R");
-            endTimeLabel.text = " - End: " + (dia.endTime / 1000f).ToString("R");
-
-            scrollView.Add(newDialog);
         }
     }
 
@@ -183,6 +156,7 @@ public class TranscriptWindow : EditorWindow
             UnityEngine.Debug.Log("Processed");
         }
     }
+
     private void RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
     {
         using (Process process = new Process())
@@ -215,17 +189,48 @@ public class TranscriptWindow : EditorWindow
     private void ExposeTranscriptElements()
     {
         UnityEngine.Debug.Log("Mostrando texto obtenido");
+        string srtPath = "./Assets/SubtitleGenerator/Tests/prueba4.txt"; // -> esto debería pasar como parámetro
+        currentDia = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
+
+        actorsFoldout.Clear();
+        List<string> actorsNamesList = new List<string>();
+        foreach (var actor in currentDia.actors)
+        {
+            TextField actorField = new TextField(actor.Key);
+            actorField.RegisterValueChangedCallback(evt =>
+            {
+                changeSpeakers(actorField, actorField.label, evt.newValue);
+            });
+
+            actorsFoldout.Add(actorField);
+            actorsNamesList.Add(actor.Key);
+        }
+
+        scrollView.Clear();
         VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
             "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
 
-        // TO-DO -> que se añadan los verdaderos rellenando la info real
-        for (int i = 0; i < 3; i++)
+        foreach (var dia in currentDia.lines)
         {
-            UnityEngine.Debug.Log(scrollView);
+            // TO-DO: Guardar esto en una lista de clases contenedores donde estén las referencias
+            // a los distintos elementos para su posterior modificación 
             VisualElement newDialog = dialogLineAsset.CloneTree();
+
+            Label actorName = newDialog.Q<Label>("lineID");
+            DropdownField actorDrop = newDialog.Q<DropdownField>("actor");
+            TextField lineField = newDialog.Q<TextField>("lineField");
+            Label startTimeLabel = newDialog.Q<Label>("startTime");
+            Label endTimeLabel = newDialog.Q<Label>("endTime");
+
+            actorName.text = "> " + dia.actorKey;
+            actorDrop.choices = actorsNamesList;
+            actorDrop.value = dia.actorKey;
+            lineField.value = dia.line;
+            startTimeLabel.text = "Start: " + (dia.startTime / 1000f).ToString("R");
+            endTimeLabel.text = " - End: " + (dia.endTime / 1000f).ToString("R");
+
             scrollView.Add(newDialog);
         }
-
     }
 
     // Guardar la transcripcion
@@ -254,5 +259,10 @@ public class TranscriptWindow : EditorWindow
         UnityEngine.Debug.Log("Delete");
         transcriptText.value = null;
         audioToTranscript = null;
+    }
+
+    private void changeSpeakers(TextField tf, string defaultName, string newName) { 
+        tf.label = newName;
+        // TO-DO: Modificar de la template el label y el dropdown, y actualizar en la estructura la info
     }
 }

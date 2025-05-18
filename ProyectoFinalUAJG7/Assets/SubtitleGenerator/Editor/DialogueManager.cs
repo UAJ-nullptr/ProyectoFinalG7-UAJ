@@ -11,9 +11,7 @@ public struct Line
     public string actorKey;
     public float startTime;
     public float endTime;
-
     public string line;
-
 }
 
 public struct Actor
@@ -35,7 +33,6 @@ public struct Dialogue
         actors = new Dictionary<string, Actor>();
         lines = new List<Line>();
     }
-
 
     public Dictionary<string, Actor> actors;
 
