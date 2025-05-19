@@ -31,7 +31,7 @@ public class ActorsFoldout : EditorWindow
         VisualElement root = rootVisualElement;
 
         // Import UXML created manually.
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SubtitleGenerator/Editor/Window/ActorsFoldout.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SubtitleGenerator/Scripts/Editor/Window/ActorsFoldout.uxml");
         VisualElement labelFromUXML = visualTree.Instantiate();
         root.Add(labelFromUXML);
 

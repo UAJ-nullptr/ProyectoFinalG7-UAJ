@@ -37,7 +37,7 @@ public class TranscriptDialogueLine : EditorWindow
         VisualElement root = rootVisualElement;
 
         // Import UXML created manually.
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SubtitleGenerator/Scripts/Editor/Window/TranscriptDialogLine.uxml");
         VisualElement labelFromUXML = visualTree.Instantiate();
         root.Add(labelFromUXML);
 

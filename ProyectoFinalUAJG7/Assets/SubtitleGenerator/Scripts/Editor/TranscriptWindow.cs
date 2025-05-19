@@ -57,7 +57,7 @@ public class TranscriptWindow : EditorWindow
         // Crear la GUI
         VisualElement root = rootVisualElement;
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-            "Assets/SubtitleGenerator/Editor/Window/SubEditorWindow.uxml");
+            "Assets/SubtitleGenerator/Scripts/Editor/Window/SubEditorWindow.uxml");
         VisualElement tree = visualTree.Instantiate();
         root.Add(tree);
 
@@ -197,7 +197,7 @@ public class TranscriptWindow : EditorWindow
 
         // Foldout de actores
         VisualTreeAsset actorsAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-                "Assets/SubtitleGenerator/Editor/Window/ActorsFoldout.uxml");
+                "Assets/SubtitleGenerator/Scripts/Editor/Window/ActorsFoldout.uxml");
         
         actorsFoldout.Clear();
         List<string> actorsNamesList = new List<string>();
@@ -214,7 +214,7 @@ public class TranscriptWindow : EditorWindow
 
         // Lista de transcripción
         VisualTreeAsset dialogLineAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
-            "Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml");
+            "Assets/SubtitleGenerator/Scripts/Editor/Window/TranscriptDialogLine.uxml");
 
         scrollView.Clear();
         transcriptDialogueList.Clear();

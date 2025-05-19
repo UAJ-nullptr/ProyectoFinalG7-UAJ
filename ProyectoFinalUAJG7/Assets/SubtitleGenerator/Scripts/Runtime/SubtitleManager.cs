@@ -14,6 +14,7 @@ public class SubtitleManager : MonoBehaviour
 {
     public static SubtitleManager instance { get; private set; }
 
+    public SubtitleData data;
     public struct SubtitleInfo
     {
         public string talker;
