@@ -15,6 +15,7 @@ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.Video;
 using static SubtitleManager;
+using Debug = UnityEngine.Debug;
 
 
 
@@ -38,6 +39,9 @@ public class TranscriptWindow : EditorWindow
     private DialogueManager dialogueManager;
     private Dialogue currentDiag;
     private List<TranscriptDialogueLine> transcriptDialogueList;
+    private SubtitleData subtitleData;
+
+    string folderPath = "Assets/Subtitles";
 
     // Añadir al menú contextual y abrir ventana
     // Se hace en "Tools" porque Unity obliga a que sea en esa pestaña por consistencia
@@ -65,6 +69,7 @@ public class TranscriptWindow : EditorWindow
         audioFileInput = root.Q<UnityEditor.UIElements.ObjectField>("audioField");
         processButton = root.Q<UnityEngine.UIElements.Button>("process");
         fileInfoInput = root.Q<UnityEditor.UIElements.ObjectField>("fileInfo");
+        fileInfoInput.objectType = typeof(SubtitleData);
         actorsFoldout = root.Q<Foldout>("actors");
         saveButton = root.Q<UnityEngine.UIElements.Button>("saveButton");
         exportButton = root.Q<UnityEngine.UIElements.Button>("exportButton");
@@ -232,7 +237,40 @@ public class TranscriptWindow : EditorWindow
     private void SaveTranscript()
     {
         UnityEngine.Debug.Log("Save");
-        // Guardar en un archivo?
+
+        if (!audioToTranscript && !videoToTranscript && !subtitleData)
+        {
+            UnityEngine.Debug.LogWarning("There is no file to transcript: please process audio/video before saving");
+            return;
+        }
+
+        if (!subtitleData)
+        {
+            createNewSubtitleData();
+        }
+        subtitleData.dialogue = currentDiag;
+        subtitleData.dialogueAudio = null; //TODO: convertir video a audio
+        fileInfoInput.value = subtitleData;
+    }
+
+    private void createNewSubtitleData()
+    {
+        SubtitleData newSD = CreateInstance<SubtitleData>();
+        newSD.name = audioToTranscript.name;
+        
+
+        // Check if folder exists, create it if not
+        if (!AssetDatabase.IsValidFolder(folderPath))
+        {
+            AssetDatabase.CreateFolder("Assets", "Subtitles");
+        }
+
+        // Create the asset
+        string assetPath = Path.Combine(folderPath, newSD.name + ".asset");
+        
+        AssetDatabase.CreateAsset(newSD, assetPath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 
     // Exportar la transcripcion

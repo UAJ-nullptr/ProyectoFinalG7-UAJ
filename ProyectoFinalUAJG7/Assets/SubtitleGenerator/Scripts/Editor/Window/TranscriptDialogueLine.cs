@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
-using static SubtitleManager;
 
 public class TranscriptDialogueLine : EditorWindow
 {

@@ -5,7 +5,7 @@ using static Dialogue;
 
 public class SubtitleData : ScriptableObject
 {
-    public Dialogue Dialogue;
+    public Dialogue dialogue;
     public AudioClip dialogueAudio;
     
 }
