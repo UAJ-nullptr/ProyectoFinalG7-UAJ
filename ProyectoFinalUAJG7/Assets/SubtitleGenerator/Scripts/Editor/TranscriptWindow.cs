@@ -210,7 +210,6 @@ public class TranscriptWindow : EditorWindow
                 process.WaitForExit();
                 return null;
             }
-            
         }
     }
 
@@ -234,6 +233,7 @@ public class TranscriptWindow : EditorWindow
         List<string> actorsNamesList = new List<string>();
         foreach (var actor in currentDiag.actors)
         {
+            Debug.Log("hola");
             ActorsFoldout newActor = CreateInstance<ActorsFoldout>();
             newActor.PopulateActorFoldout(currentDiag, actor.Key);
             newActor.CreateGUI();
@@ -273,11 +273,11 @@ public class TranscriptWindow : EditorWindow
             return;
         }
 
-        string folderPath = "Assets/Subtitles";
+        string folderPath = "Assets/SubtitleGenerator/Subtitles";
         // Check if folder exists, create it if not
         if (!AssetDatabase.IsValidFolder(folderPath))
         {
-            string aux = AssetDatabase.CreateFolder("Assets", "Subtitles");
+            string aux = AssetDatabase.CreateFolder("Assets/SubtitleGenerator", "Subtitles");
             folderPath = AssetDatabase.GUIDToAssetPath(aux);
         }
 
