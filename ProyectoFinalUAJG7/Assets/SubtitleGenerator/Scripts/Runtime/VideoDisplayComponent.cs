@@ -15,6 +15,9 @@ public class VideoUIPlayer : MonoBehaviour
     {
         texture = new RenderTexture(1344, 756, 0);
         texture.name = "videoAuxTexture";
+        RenderTexture.active = texture;
+        GL.Clear(true, true, Color.clear);
+        RenderTexture.active = null;
     }
 
     void OnVideoPrepared(VideoPlayer vp)
@@ -32,6 +35,7 @@ public class VideoUIPlayer : MonoBehaviour
             CreateTexture();
             videoPlayer.targetTexture = texture;
             videoPlayer.clip = video;
+            displayerImage.texture = null;
             displayerImage.texture = texture;
             videoPlayer.Prepare();
             videoPlayer.prepareCompleted += OnVideoPrepared;
