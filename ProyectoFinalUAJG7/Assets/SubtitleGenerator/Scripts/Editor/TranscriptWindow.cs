@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Search;
 using UnityEditor.UI;
@@ -129,7 +130,7 @@ public class TranscriptWindow : EditorWindow
     }
 
     // Metodo que llama a Whisper y compañia para entonces mostrarlo en el TextField
-    private void ProcessAudio()
+    private async void ProcessAudio()
     {
         UnityEngine.Debug.Log("Process");
         if (audioToTranscript != null || videoToTranscript != null) {
@@ -165,7 +166,8 @@ public class TranscriptWindow : EditorWindow
             string pythonCmd = $"{scriptName}"; /*{arguments}*/
 
             // 3. Correr el archivo de python
-            string transPath = RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
+            //string transPath = RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
+            string transPath = await RunCommandAsync(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
 
             // Podemos dejar definida la carpeta donde se va a encontrar el SRT hardcodeado
             // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas
@@ -181,36 +183,37 @@ public class TranscriptWindow : EditorWindow
         }
     }
 
-    private string RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
+    public async Task<string> RunCommandAsync(string executer, string command, string workingDirectory, bool useShell = false)
     {
         using (Process process = new Process())
         {
             process.StartInfo.WorkingDirectory = workingDirectory;
             process.StartInfo.FileName = executer;
-            process.StartInfo.Arguments = $"{command}";
+            process.StartInfo.Arguments = command;
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
-            process.StartInfo.CreateNoWindow = false;
-            
+            process.StartInfo.CreateNoWindow = true;
+
             process.Start();
 
-            if (!useShell)
-            {
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-                List<String> result = new List<String> (output.Split('\n', '\r'));
-                UnityEngine.Debug.LogError("Error:");
-                UnityEngine.Debug.LogError(error);
-                process.WaitForExit();
-                return result[result.Count - 3];
-            }
-            else
-            {
-                process.WaitForExit();
-                return null;
-            }
+            // Lectura no bloqueante
+            string output = await process.StandardOutput.ReadToEndAsync();
+            string error = await process.StandardError.ReadToEndAsync();
+
+            await Task.Run(() => process.WaitForExit());
+
+            List<string> result = new List<string>(output.Split(new[] { '\n', '\r' }, StringSplitOptions.None));
+
+            return result[result.Count - 3];
         }
+    }
+
+    // Llamar desde otro script, o usar un botón para probar
+    public async void Start()
+    {
+        string result = await RunCommandAsync("tuEjecutable", "--argumentos", "ruta/al/directorio");
+        Debug.Log("Resultado del proceso: " + result);
     }
 
     private void ExposeTranscriptElements(string srtPath)
