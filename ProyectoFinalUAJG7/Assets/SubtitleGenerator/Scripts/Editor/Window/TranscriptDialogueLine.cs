@@ -98,7 +98,7 @@ public class TranscriptDialogueLine : EditorWindow
             actorDrop.value = newName;
             int index = actorDrop.choices.IndexOf(trimedDefaultName);
             if (index != -1) actorDrop.choices[actorDrop.choices.IndexOf(trimedDefaultName)] = newName;
-
+            actorDrop.MarkDirtyRepaint();
             // En la línea
             lineRef.actorKey = newName;
 

@@ -287,8 +287,8 @@ public class SubtitleManager : MonoBehaviour
             subtitleInfo.content = l.line;
             subtitleInfo.talker = sD.actors[l.actorKey].name;
             subtitleInfo.talkerColor = sD.actors[l.actorKey].color;
-            subtitleInfo.startTime = (int) l.startTime * 1000;
-            subtitleInfo.endTime = (int) l.endTime * 1000;
+            subtitleInfo.startTime = (int) l.startTime;
+            subtitleInfo.endTime = (int) l.endTime;
             subtitles.Add(subtitleInfo);
         }
     }

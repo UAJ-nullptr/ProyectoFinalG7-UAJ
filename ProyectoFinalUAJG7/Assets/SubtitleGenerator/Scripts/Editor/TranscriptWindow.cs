@@ -243,6 +243,15 @@ public class TranscriptWindow : EditorWindow
         return actorsNamesList;
     }
 
+    private void UpdateLineValues()
+    {
+        foreach(var t in transcriptDialogueList)
+        {
+            int i = transcriptDialogueList.IndexOf(t);
+            currentDiag.lines[i] = t.lineRef;
+        }
+    }
+
     private void PopulateTranscriptLineList(List<string> actorsNamesList)
     {
         // Lista de transcripción
@@ -250,11 +259,11 @@ public class TranscriptWindow : EditorWindow
         transcriptDialogueList.Clear();
         foreach (var line in currentDiag.lines)
         {
-            TranscriptDialogueLine newDiag = CreateInstance<TranscriptDialogueLine>();
-            newDiag.PopulateDialogueLine(line, currentDiag, actorsNamesList);
-            newDiag.CreateGUI();
-            scrollView.contentContainer.Add(newDiag.rootVisualElement);
-            transcriptDialogueList.Add(newDiag);
+            TranscriptDialogueLine newDiagLine = CreateInstance<TranscriptDialogueLine>();
+            newDiagLine.PopulateDialogueLine(line, currentDiag, actorsNamesList);
+            newDiagLine.CreateGUI();
+            scrollView.contentContainer.Add(newDiagLine.rootVisualElement);
+            transcriptDialogueList.Add(newDiagLine);
         }
     }
 
@@ -262,6 +271,7 @@ public class TranscriptWindow : EditorWindow
     private void SaveTranscript()
     {
         UnityEngine.Debug.Log("Save");
+        UpdateLineValues();
 
         // Comprobar si se ha seleccionado algo a procesar
         if (!audioToTranscript && !videoToTranscript && !subtitleData)
@@ -353,6 +363,7 @@ public class TranscriptWindow : EditorWindow
     private void ExportTranscript()
     {
         UnityEngine.Debug.Log("Export");
+        UpdateLineValues();
 
         if (!audioToTranscript && !videoToTranscript && !subtitleData)
         {

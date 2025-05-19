@@ -52,7 +52,7 @@ public class ActorsFoldout : EditorWindow
         if (actor != "")
         {
             actorName.text = "> " + actor;
-            actorColor.value = Color.white;
+            actorColor.value = dialogueRef.actors[actor].color;
         }
     }
 
