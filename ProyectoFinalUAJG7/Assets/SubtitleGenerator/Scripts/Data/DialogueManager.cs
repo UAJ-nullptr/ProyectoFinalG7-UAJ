@@ -134,8 +134,6 @@ public class DialogueManager
                 newLine = new();
             }
         }
-        // Se añade el segmento a la lista de súbtitulos si termina, para recoger la ultima linea
-        dialogue.lines.Add(newLine);
         reader.Close();
 
         return dialogue;
