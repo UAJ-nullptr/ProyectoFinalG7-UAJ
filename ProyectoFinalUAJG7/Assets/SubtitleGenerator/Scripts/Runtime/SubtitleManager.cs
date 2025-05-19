@@ -281,10 +281,12 @@ public class SubtitleManager : MonoBehaviour
         subtitles.Clear();
 
         SubtitleInfo subtitleInfo = new SubtitleInfo();
-        foreach (var l in data.dialogue.lines) { 
+        var sD = data.getDialogue();
+
+        foreach (var l in sD.lines) { 
             subtitleInfo.content = l.line;
-            subtitleInfo.talker = data.dialogue.actors[l.actorKey].name;
-            subtitleInfo.talkerColor = data.dialogue.actors[l.actorKey].color;
+            subtitleInfo.talker = sD.actors[l.actorKey].name;
+            subtitleInfo.talkerColor = sD.actors[l.actorKey].color;
             subtitleInfo.startTime = (int) l.startTime * 1000;
             subtitleInfo.endTime = (int) l.endTime * 1000;
             subtitles.Add(subtitleInfo);
@@ -308,7 +310,7 @@ public class SubtitleManager : MonoBehaviour
 
     void Start()
     {
-        if (data)
+        if (data != null)
         {
             loadFromSubtitleData();
         }

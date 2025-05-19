@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
-
+[Serializable]
 public struct Line
 {
     public string actorKey;
@@ -14,7 +14,7 @@ public struct Line
     public float endTime;
     public string line;
 }
-
+[Serializable]
 public struct Actor
 {
     public Actor(int unused = 0)
@@ -26,7 +26,7 @@ public struct Actor
     public string name;
     public Color color;
 }
-
+[Serializable]
 public struct Dialogue
 {
     public Dialogue(int unused = 0)

@@ -14,6 +14,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using UnityEngine.Video;
+using static PlasticPipe.Server.MonitorStats;
 using static SubtitleManager;
 using Debug = UnityEngine.Debug;
 
@@ -85,6 +86,15 @@ public class TranscriptWindow : EditorWindow
         UnityEngine.Debug.Log("GUI created.");
     }
 
+    private void generateValuesDebug()
+    {
+        string srtPath = "./Assets/SubtitleGenerator/Tests/prueba4.txt";
+        currentDiag = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
+
+        var actorsNameList = PopulateActorsNameList();
+        PopulateTranscriptLineList(actorsNameList);
+    }
+
     // Metodo para cuando se añade el audio
     private void AudioSelected(ChangeEvent<UnityEngine.Object> evt)
     {
@@ -115,7 +125,7 @@ public class TranscriptWindow : EditorWindow
         if (eventData is SubtitleData)
         {
             subtitleData = (SubtitleData)eventData;
-            currentDiag = subtitleData.dialogue;
+            currentDiag = subtitleData.getDialogue();
             var actorsNameList = PopulateActorsNameList();
             PopulateTranscriptLineList(actorsNameList);
         }
@@ -269,15 +279,23 @@ public class TranscriptWindow : EditorWindow
         }
 
         saveToFile(folderPath);
-        createNewSubtitleData(folderPath);
-        subtitleData.dialogue = currentDiag;
+        if (!subtitleData)
+        {
+            createNewSubtitleData(folderPath);
+        }
+        subtitleData.saveDialogue(currentDiag);
         subtitleData.dialogueAudio = null;
         fileInfoInput.value = subtitleData;
+
+        // Mark as dirty to ensure changes are saved
+        EditorUtility.SetDirty(subtitleData);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
     }
 
     private void saveToFile(string folderPath)
     {
-        string srtPath = folderPath + "\\" + (audioToTranscript ? audioToTranscript.name : videoToTranscript.name) + ".str";
+        string srtPath = folderPath + "\\" + (audioToTranscript ? audioToTranscript.name : videoToTranscript.name) + ".srt";
         StreamWriter writer = new StreamWriter(srtPath);
 
         int index = 1;
@@ -361,10 +379,21 @@ public class TranscriptWindow : EditorWindow
         }
 
         saveToFile(folderPath);
-        createNewSubtitleData(folderPath);
-        subtitleData.dialogue = currentDiag;
+        if (!subtitleData)
+        {
+            createNewSubtitleData(folderPath);
+        }
+        subtitleData.saveDialogue(currentDiag);
         subtitleData.dialogueAudio = null;
         fileInfoInput.value = subtitleData;
+
+
+        // Mark as dirty to ensure changes are saved
+        EditorUtility.SetDirty(subtitleData);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+
+
     }
 
     public List<TranscriptDialogueLine> getTranscriptsList()
