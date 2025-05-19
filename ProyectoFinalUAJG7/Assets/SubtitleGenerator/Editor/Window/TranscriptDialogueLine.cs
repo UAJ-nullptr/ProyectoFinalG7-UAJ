@@ -10,18 +10,12 @@ public class TranscriptDialogueLine : EditorWindow
     public Dialogue dialogueRef;
     public List<string> actorNames;
 
-
     TextField lineField;
     Label startTimeLabel;
     Label endTimeLabel;
     Label actorLabel;
-
     Label actorName;
     DropdownField actorDrop;
-
-
-    [SerializeField]
-    private VisualTreeAsset m_VisualTreeAsset = default;
 
     public void PopulateDialogueLine(Line line, Dialogue dialogue, List<string> names)
     {
@@ -58,10 +52,11 @@ public class TranscriptDialogueLine : EditorWindow
         startTimeLabel = root.Q<Label>("startTime");
         endTimeLabel = root.Q<Label>("endTime");
 
+        SetCallBacks();
         UpdateFields();
     }
 
-    public void UpdateFields()
+    private void UpdateFields()
     {
         if (lineRef.line != "")
         {
@@ -77,4 +72,27 @@ public class TranscriptDialogueLine : EditorWindow
             endTimeLabel.text = " - End: " + (lineRef.endTime / 1000f).ToString("R");
         }
     }
+
+    private void SetCallBacks()
+    {
+        actorDrop.RegisterValueChangedCallback(evt => { DropDownUpdateSpeaker(); });
+    }
+
+    public void DropDownUpdateSpeaker()
+    {
+        actorName.text = "> " + actorDrop.value;
+    }
+
+    public void UpdateSpeakerName(string defaultName, string newName) {
+        int index = actorDrop.choices.IndexOf(defaultName.Replace("> ", ""));
+        if (index != -1)
+        {
+            actorDrop.choices[index] = newName;
+        }
+        if (actorName.text == defaultName) {
+            actorName.text = "> " + newName;
+            actorDrop.value = newName;
+        }
+    }
 }
+

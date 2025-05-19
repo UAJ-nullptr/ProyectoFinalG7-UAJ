@@ -1,4 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <ui:Template name="ActorsFoldout" src="project://database/Assets/SubtitleGenerator/Editor/Window/ActorsFoldout.uxml?fileID=9197481963319205126&amp;guid=be613c08148108544b3ecb140a2de9de&amp;type=3#ActorsFoldout" />
     <ui:Template name="TranscriptDialogLine" src="project://database/Assets/SubtitleGenerator/Editor/Window/TranscriptDialogLine.uxml?fileID=9197481963319205126&amp;guid=03341ab001cfc2b43bcc69301133d0e9&amp;type=3#TranscriptDialogLine" />
     <Style src="project://database/Assets/SubtitleGenerator/Editor/Style/TranscriptStyle.uss?fileID=7433441132597879392&amp;guid=ccf30f7ae400f7e498d2a857cf8ac2d8&amp;type=3#TranscriptStyle" />
     <ui:Label tabindex="-1" text="Transcript Audio Tool" parse-escape-sequences="true" display-tooltip-when-elided="true" name="title" style="height: 35px;" />
@@ -7,7 +8,9 @@
             <uie:ObjectField label="Audio File" name="audioField" style="margin-bottom: 5px;" />
             <ui:Button text="Process" parse-escape-sequences="true" display-tooltip-when-elided="true" name="process" style="margin-bottom: 0;" />
             <uie:ObjectField label="File Info" name="fileInfo" />
-            <ui:Foldout text="Actors (default / personalized)" name="actors" style="max-height: none;" />
+            <ui:Foldout text="Actors" name="actors" style="max-height: none;">
+                <ui:Instance template="ActorsFoldout" name="ActorsFoldout" />
+            </ui:Foldout>
             <ui:VisualElement name="buttonsView" style="flex-grow: 1; flex-direction: row; align-self: flex-end; transform-origin: center; min-height: auto; flex-shrink: 1; max-height: none; margin-top: 5px;">
                 <ui:Button text="Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="saveButton" style="flex-grow: 1; height: 20px;" />
                 <ui:Button text="Export" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportButton" style="flex-grow: 1; height: 20px;" />

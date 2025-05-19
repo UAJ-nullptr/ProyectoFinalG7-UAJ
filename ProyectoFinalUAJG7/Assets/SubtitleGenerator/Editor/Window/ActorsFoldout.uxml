@@ -1,9 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <ui:VisualElement style="flex-grow: 1;">
-        <ui:VisualElement style="flex-grow: 0; flex-direction: row; flex-shrink: 0; justify-content: space-between; align-items: center;">
-            <ui:Label tabindex="-1" text="Actor transcribed name" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-text-align: middle-center; white-space: nowrap;" />
-            <ui:Label tabindex="-1" text="Real name" parse-escape-sequences="true" display-tooltip-when-elided="true" style="-unity-text-align: middle-center; justify-content: center;" />
-        </ui:VisualElement>
-        <ui:TextField picking-mode="Ignore" label="Text Field" value="filler text" />
+        <ui:Label tabindex="-1" text="&gt; Actor name" parse-escape-sequences="true" display-tooltip-when-elided="true" name="actorName" style="-unity-text-align: middle-left; white-space: nowrap;" />
+        <ui:TextField picking-mode="Ignore" name="actorField" label="Personalized name" />
+        <uie:ColorField label="Color" value="#FFFFFFFF" name="actorColor" style="margin-top: 2px; margin-bottom: 5px;" />
     </ui:VisualElement>
+    <ui:VisualElement style="flex-grow: 1; -unity-background-image-tint-color: rgb(255, 0, 0); height: 1px; margin-top: 6px; margin-bottom: 6px; background-image: none; min-height: 1px; max-height: 1px; background-color: rgb(208, 208, 208); margin-right: 6px; margin-left: 6px;" />
 </ui:UXML>
