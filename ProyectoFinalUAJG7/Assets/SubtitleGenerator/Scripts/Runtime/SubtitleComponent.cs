@@ -30,14 +30,23 @@ public class SubtitleComponent : MonoBehaviour
     private bool italic = false;
     [SerializeField]
     private bool multipleSpeakers = false;
-
+    [SerializeField]
+    private Color defaultColor = Color.white;
     private int maxWidth = 1250;
 
     #region Setters
     public void setText(SubtitleManager.SubtitleInfo subInfo)
     {
         transform.position = anchorPosition;
-        textComponent.text = multipleSpeakers ? "-" + subInfo.content : subInfo.content;
+        string hex = ColorUtility.ToHtmlStringRGBA(subInfo.talkerColor);
+        string text = "<color=#" + hex + ">";
+        text += subInfo.talker;
+        text += "</color>";
+        text += "-" + subInfo.content;
+
+        textComponent.text = text;
+
+
 
         float textCanvasWidth = textComponent.preferredWidth;
 

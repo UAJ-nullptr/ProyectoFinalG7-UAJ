@@ -18,6 +18,7 @@ public class SubtitleManager : MonoBehaviour
     public struct SubtitleInfo
     {
         public string talker;
+        public Color talkerColor;
         public string content;
         public int startTime;
         public int endTime;
@@ -47,6 +48,9 @@ public class SubtitleManager : MonoBehaviour
     [SerializeField]
     string path = "prueba.txt";
     StreamReader reader;
+
+    [SerializeField]
+    private Color defaultColor = Color.white;
 
     [SerializeField]
     private SubtitleComponent subtitleComponent;
@@ -96,7 +100,8 @@ public class SubtitleManager : MonoBehaviour
             entries.Add(new SubtitleInfo {
                 content = sentences[i].Trim(),
                 startTime = currentStart,
-                endTime = currentEnd
+                endTime = currentEnd,
+                talkerColor = defaultColor
             });
 
             currentStart = currentEnd;
@@ -123,6 +128,7 @@ public class SubtitleManager : MonoBehaviour
         subtitleInfo.endTime = 0;
         subtitleInfo.content = "";
         subtitleInfo.talker = "";
+        subtitleInfo.talkerColor = defaultColor;
 
         String line;
         // Procesamos línea por línea
@@ -202,7 +208,7 @@ public class SubtitleManager : MonoBehaviour
                 subtitleInfo.startTime = (int)(startAux * 1000);
                 float endAux = float.Parse(segment.end, CultureInfo.InvariantCulture.NumberFormat);
                 subtitleInfo.endTime = (int)(endAux * 1000);
-
+                subtitleInfo.talkerColor = defaultColor;
                 subtitles.Add(subtitleInfo);
             }
         }
@@ -229,6 +235,7 @@ public class SubtitleManager : MonoBehaviour
         subtitleInfo.endTime = 0;
         subtitleInfo.content = "";
         subtitleInfo.talker = "";
+        subtitleInfo.talkerColor = defaultColor;
 
         String line;
         // Procesamos línea por línea
@@ -265,6 +272,22 @@ public class SubtitleManager : MonoBehaviour
         subtitles.Add(subtitleInfo);
         reader.Close();
     }
+    
+    private void loadFromSubtitleData()
+    {
+        subtitles.Clear();
+
+        SubtitleInfo subtitleInfo = new SubtitleInfo();
+        foreach (var l in data.dialogue.lines) { 
+            subtitleInfo.content = l.line;
+            subtitleInfo.talker = data.dialogue.actors[l.actorKey].name;
+            subtitleInfo.talkerColor = data.dialogue.actors[l.actorKey].color;
+            subtitleInfo.startTime = (int) l.startTime * 1000;
+            subtitleInfo.endTime = (int) l.endTime * 1000;
+            subtitles.Add(subtitleInfo);
+        }
+    }
+    
     #endregion
 
     private void Awake()
@@ -283,7 +306,14 @@ public class SubtitleManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        readTextSRT();
+        if (data)
+        {
+            loadFromSubtitleData();
+        }
+        else
+        {
+            readTextSRT();
+        }
         subtitlesActivated = false;
     }
 
