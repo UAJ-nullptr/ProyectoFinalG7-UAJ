@@ -1,6 +1,7 @@
 import os
 import shutil
 import sys
+import datetime
 from Utils import install_package, configure_ffmpeg, is_video, video_to_audio
 
 # Paquetes necesarios
@@ -38,7 +39,7 @@ from whisper.utils import get_writer
 
 ### PROCESO DE TRANSCRIPCION ###
 # Paso 1: Diarización -  Cargar el pipeline de pyannote
-print("Carpeta actual:", os.getcwd())
+
 PATH_TO_CONFIG = os.path.abspath("..\pyannote\config.yaml")
 pipeline = Pipeline.from_pretrained(PATH_TO_CONFIG)
 
@@ -90,7 +91,7 @@ model = whisper.load_model("medium")
 
 # Lista para almacenar las transcripciones
 transcriptions = []
-srt_writer = get_writer("srt", ".")
+srt_writer = get_writer("srt", "../Transcriptions")
 srt_segments = []
 
 # Procesar cada segmento y transcribir
@@ -103,5 +104,12 @@ for segment, speaker, start, end in segments:
         'end': end,
         'text': f"Speaker {speaker}: {result['text']}"
     })
+    
+current_time = datetime.datetime.now()
+myChar = os.path.sep
+myIndex = len(audio_file.split(os.path.sep))
+audio_file = audio_file.split(myChar)[myIndex-1]
+file_name = f"{audio_file.replace(".wav","")}_{current_time.hour}_{current_time.minute}_{current_time.second}"
+srt_writer({'segments': srt_segments}, file_name)
 
-srt_writer({'segments': srt_segments}, audio_file)
+print(f"./Assets/SubtitleGenerator/Transcriptions/{file_name}.srt")

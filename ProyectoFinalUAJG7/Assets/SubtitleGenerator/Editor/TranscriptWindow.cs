@@ -145,19 +145,19 @@ public class TranscriptWindow : EditorWindow
             string pythonCmd = $"{scriptName}"; /*{arguments}*/
 
             // 3. Correr el archivo de python
-            RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
+            string transPath = RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
 
             // Podemos dejar definida la carpeta donde se va a encontrar el SRT hardcodeado
             // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas
 
             // Método que expondrá en la ventana los dialogos
-            ExposeTranscriptElements();
+            ExposeTranscriptElements(transPath);
 
             UnityEngine.Debug.Log("Processed");
         }
     }
 
-    private void RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
+    private string RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
     {
         using (Process process = new Process())
         {
@@ -175,21 +175,26 @@ public class TranscriptWindow : EditorWindow
             {
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
-                UnityEngine.Debug.Log("Salida:");
-                UnityEngine.Debug.Log(output);
+                List<String> result = new List<String> (output.Split('\n', '\r'));
                 UnityEngine.Debug.LogError("Error:");
                 UnityEngine.Debug.LogError(error);
+                process.WaitForExit();
+                return result[result.Count - 3];
             }
-
-            process.WaitForExit();
+            else
+            {
+                process.WaitForExit();
+                return null;
+            }
+            
         }
     }
 
 
-    private void ExposeTranscriptElements()
+    private void ExposeTranscriptElements(string path)
     {
         UnityEngine.Debug.Log("Mostrando texto obtenido");
-        string srtPath = "./Assets/SubtitleGenerator/Tests/prueba4.txt"; // -> esto debería pasar como parámetro
+        string srtPath = path; // -> esto debería pasar como parámetro
         currentDia = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
 
         actorsFoldout.Clear();
