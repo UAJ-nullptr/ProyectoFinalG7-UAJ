@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using UnityEditor;
 using UnityEditor.Search;
 using UnityEditor.UI;
@@ -92,13 +91,13 @@ public class TranscriptWindow : EditorWindow
         var value = evt.newValue;
         if (value is AudioClip)
         {
-            audioToTranscript = (AudioClip) evt.newValue;
+            audioToTranscript = (AudioClip)evt.newValue;
             videoToTranscript = null;
             UnityEngine.Debug.Log("\"" + audioToTranscript.name + "\" setted correctly.");
         }
         else if (value is VideoClip)
         {
-            videoToTranscript = (VideoClip) evt.newValue;
+            videoToTranscript = (VideoClip)evt.newValue;
             audioToTranscript = null;
             UnityEngine.Debug.Log("\"" + videoToTranscript.name + "\" setted correctly.");
         }
@@ -127,10 +126,11 @@ public class TranscriptWindow : EditorWindow
     }
 
     // Metodo que llama a Whisper y compañia para entonces mostrarlo en el TextField
-    private async void ProcessAudio()
+    private void ProcessAudio()
     {
         UnityEngine.Debug.Log("Process");
-        if (audioToTranscript != null || videoToTranscript != null) {
+        if (audioToTranscript != null || videoToTranscript != null)
+        {
             UnityEngine.Debug.Log("Processing...");
 
             // Llamar al metodo de Pyhton
@@ -153,10 +153,9 @@ public class TranscriptWindow : EditorWindow
                 return;
             }
 
-            string pythonCmd = $"{scriptName}"; /*{arguments}*/
-
             // Correr el archivo de python
-            string transPath = await RunCommandAsync(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
+            string transPath = RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
+
 
             // Método que expondrá en la ventana los dialogos
             ExposeTranscriptElements(transPath);
@@ -169,13 +168,13 @@ public class TranscriptWindow : EditorWindow
         }
     }
 
-    public async Task<string> RunCommandAsync(string executer, string command, string workingDirectory, bool useShell = false)
+    private string RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
     {
         using (Process process = new Process())
         {
             process.StartInfo.WorkingDirectory = workingDirectory;
             process.StartInfo.FileName = executer;
-            process.StartInfo.Arguments = command;
+            process.StartInfo.Arguments = $"{command}";
             process.StartInfo.RedirectStandardOutput = true;
             process.StartInfo.RedirectStandardError = true;
             process.StartInfo.UseShellExecute = false;
@@ -183,29 +182,28 @@ public class TranscriptWindow : EditorWindow
 
             process.Start();
 
-            // Lectura no bloqueante
-            string output = await process.StandardOutput.ReadToEndAsync();
-            string error = await process.StandardError.ReadToEndAsync();
-
-            await Task.Run(() => process.WaitForExit());
-
-            List<string> result = new List<string>(output.Split(new[] { '\n', '\r' }, StringSplitOptions.None));
-
-            return result[result.Count - 3];
+            if (!useShell)
+            {
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+                List<String> result = new List<String>(output.Split('\n', '\r'));
+                UnityEngine.Debug.LogError("Error:");
+                UnityEngine.Debug.LogError(error);
+                process.WaitForExit();
+                return result[result.Count - 3];
+            }
+            else
+            {
+                process.WaitForExit();
+                return null;
+            }
         }
-    }
-
-    // Llamar desde otro script, o usar un botón para probar
-    public async void Start()
-    {
-        string result = await RunCommandAsync("tuEjecutable", "--argumentos", "ruta/al/directorio");
-        Debug.Log("Resultado del proceso: " + result);
     }
 
     private void ExposeTranscriptElements(string srtPath)
     {
         UnityEngine.Debug.Log("Mostrando texto obtenido");
-        currentDiag = (Dialogue) dialogueManager.ReadTextSRT(srtPath);
+        currentDiag = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
 
         // Foldout de actores
         VisualTreeAsset actorsAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
@@ -315,7 +313,7 @@ public class TranscriptWindow : EditorWindow
 
     private void createNewSubtitleData(string folderPath)
     {
-        
+
         SubtitleData newSD = CreateInstance<SubtitleData>();
         newSD.name = audioToTranscript ? audioToTranscript.name : videoToTranscript.name;
 
