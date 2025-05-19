@@ -165,13 +165,13 @@ public class TranscriptWindow : EditorWindow
             string pythonCmd = $"{scriptName}"; /*{arguments}*/
 
             // 3. Correr el archivo de python
-            RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
+            string transPath = RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
 
             // Podemos dejar definida la carpeta donde se va a encontrar el SRT hardcodeado
             // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas
 
             // Método que expondrá en la ventana los dialogos
-            ExposeTranscriptElements("./Assets/SubtitleGenerator/Tests/prueba6.txt");
+            ExposeTranscriptElements(transPath);
 
             UnityEngine.Debug.Log("Processed");
         }
@@ -181,7 +181,7 @@ public class TranscriptWindow : EditorWindow
         }
     }
 
-    private void RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
+    private string RunCommand(string executer, string command, string workingDirectory, bool useShell = false)
     {
         using (Process process = new Process())
         {
@@ -199,13 +199,18 @@ public class TranscriptWindow : EditorWindow
             {
                 string output = process.StandardOutput.ReadToEnd();
                 string error = process.StandardError.ReadToEnd();
-                UnityEngine.Debug.Log("Salida:");
-                UnityEngine.Debug.Log(output);
+                List<String> result = new List<String> (output.Split('\n', '\r'));
                 UnityEngine.Debug.LogError("Error:");
                 UnityEngine.Debug.LogError(error);
+                process.WaitForExit();
+                return result[result.Count - 3];
             }
-
-            process.WaitForExit();
+            else
+            {
+                process.WaitForExit();
+                return null;
+            }
+            
         }
     }
 

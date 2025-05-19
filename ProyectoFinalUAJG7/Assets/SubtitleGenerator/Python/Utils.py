@@ -5,7 +5,7 @@ import sys
 # Función para instalar un paquete
 def install_package(package):
     try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package], stdout=subprocess.DEVNULL)
         print(f"{package} instalado correctamente.")
     except subprocess.CalledProcessError:
         print(f"Error al instalar {package}.")

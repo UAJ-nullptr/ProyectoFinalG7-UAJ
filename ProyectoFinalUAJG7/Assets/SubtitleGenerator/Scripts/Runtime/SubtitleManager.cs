@@ -19,9 +19,7 @@ public class SubtitleManager : MonoBehaviour
     {
         public string talker;
         public string content;
-        //public string startTime;
         public int startTime;
-        //public string endTime;
         public int endTime;
     }
 
@@ -42,6 +40,10 @@ public class SubtitleManager : MonoBehaviour
     }
 
     #region atributes
+    [SerializeField]
+    private AudioSource audioSource;
+    bool pause = false;
+
     [SerializeField]
     string path = "prueba.txt";
     StreamReader reader;
@@ -288,54 +290,65 @@ public class SubtitleManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
-        time += Time.deltaTime;
-        // Comprobamos que inicia el hablante
-        if (cont < subtitles.Count && subtitles[cont].startTime < time * 1000)
+        if (Input.GetKeyUp(KeyCode.P))
         {
-            if(cont+1 < subtitles.Count && subtitles[cont+1].startTime < subtitles[cont].endTime) // Dos hablantes
-            {
-                if (subtitlesActivated)
-                {
-                    // Descativamos el texto individual
-                    subtitleComponent.gameObject.SetActive(false);
+            if (pause)
+                audioSource.Play();
+            else
+                audioSource.Pause();
+            pause = !pause;
+        }
 
-                    // Activamos los textos de los dos hablantes
-                    subtitleComponentSpeaker1.gameObject.SetActive(true);
-                    subtitleComponentSpeaker2.gameObject.SetActive(true);
+        if (!pause)
+        {
+            time = audioSource.time;
+            // Comprobamos que inicia el hablante
+            if (cont < subtitles.Count && subtitles[cont].startTime < time * 1000)
+            {
+                if (cont + 1 < subtitles.Count && subtitles[cont + 1].startTime < subtitles[cont].endTime) // Dos hablantes
+                {
+                    if (subtitlesActivated)
+                    {
+                        // Descativamos el texto individual
+                        subtitleComponent.gameObject.SetActive(false);
+
+                        // Activamos los textos de los dos hablantes
+                        subtitleComponentSpeaker1.gameObject.SetActive(true);
+                        subtitleComponentSpeaker2.gameObject.SetActive(true);                       
+                    }
 
                     // Colocamos los nuevos textos para los dos hablantes
                     subtitleComponentSpeaker1.setText(subtitles[cont]);
                     subtitleComponentSpeaker2.setText(subtitles[cont + 1]);
+
+                    maxEndTime = Math.Max(subtitles[cont].endTime, subtitles[cont + 1].endTime);
+                    cont++;
                 }
-                maxEndTime = Math.Max(subtitles[cont].endTime, subtitles[cont+1].endTime);
-                cont++; 
-            }
-            else // Un solo hablante
-            {
-                if (subtitlesActivated)
+                else // Un solo hablante
                 {
-                    // Desactivamos los textos de los dos hablantes
-                    subtitleComponentSpeaker1.gameObject.SetActive(false);
-                    subtitleComponentSpeaker2.gameObject.SetActive(false);
+                    if (subtitlesActivated)
+                    {
+                        // Desactivamos los textos de los dos hablantes
+                        subtitleComponentSpeaker1.gameObject.SetActive(false);
+                        subtitleComponentSpeaker2.gameObject.SetActive(false);
 
-                    // Activamos el texto individual
-                    subtitleComponent.gameObject.SetActive(true);
-
+                        // Activamos el texto individual
+                        subtitleComponent.gameObject.SetActive(true);                    
+                    }
                     // Colocamos el nuevo texto
                     subtitleComponent.setText(subtitles[cont]);
+                    maxEndTime = subtitles[cont].endTime;
                 }
-                maxEndTime = subtitles[cont].endTime;
+                cont++;
             }
-            cont++;
-        }
 
-        // Si se ha terminado el texto y se ha pasado el tiempo se desactivan los subtítulos
-        if(cont > 0 && cont >= subtitles.Count && maxEndTime < time * 1000)
-        {
-            subtitleComponent.gameObject.SetActive(false);
-            subtitleComponentSpeaker1.gameObject.SetActive(false);
-            subtitleComponentSpeaker2.gameObject.SetActive(false);
-        }
+            // Si se ha terminado el texto y se ha pasado el tiempo se desactivan los subtítulos
+            if (cont > 0 && cont >= subtitles.Count && maxEndTime < time * 1000)
+            {
+                subtitleComponent.gameObject.SetActive(false);
+                subtitleComponentSpeaker1.gameObject.SetActive(false);
+                subtitleComponentSpeaker2.gameObject.SetActive(false);
+            }
+        }      
     }
 }

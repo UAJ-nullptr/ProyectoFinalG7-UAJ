@@ -20,6 +20,25 @@ def install_model():
     print("Descargando modelo medium...")
     model = whisper.load_model("medium")
     print("Modelo descargado con exito")
+    # Función para instalar un 
+    
+def install_package(package):
+    try:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package, "-t", os.path.join(env_dir, "Lib", "site-packages")])
+        print(f"{package} instalado correctamente.")
+    except subprocess.CalledProcessError:
+        print(f"Error al instalar {package}.")
 
 create_virtualenv()
+# Paquetes necesarios
+packages = [
+    "openai-whisper>=20230314"
+]
+
+### CONFIGURACION DEL ENTORNO ###
+# Instalar todos los paquetes
+for package in packages:
+    install_package(package)
+print("Instalación completa de todos los paquetes.")
+
 install_model()
