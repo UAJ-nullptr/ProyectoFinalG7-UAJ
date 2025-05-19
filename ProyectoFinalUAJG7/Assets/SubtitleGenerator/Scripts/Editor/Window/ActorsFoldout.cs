@@ -33,12 +33,12 @@ public class ActorsFoldout : EditorWindow
     {
         VisualElement root = rootVisualElement;
 
-        // Import UXML created manually.
+        // Importa UXML creado manualmente
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SubtitleGenerator/Scripts/Editor/Window/ActorsFoldout.uxml");
         VisualElement labelFromUXML = visualTree.Instantiate();
         root.Add(labelFromUXML);
 
-        // Each editor window contains a root VisualElement object
+        // Cada ventana del editor contiene una raiz a su VisualElement
         actorName = root.Q<Label>("actorName");
         actorField = root.Q<TextField>("actorField");
         actorColor = root.Q<ColorField>("actorColor");

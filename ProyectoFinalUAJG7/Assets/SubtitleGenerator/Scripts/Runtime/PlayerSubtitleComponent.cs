@@ -28,7 +28,6 @@ public class PlayerSubtitleComponent : MonoBehaviour
         subtitlesOn = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.Q)) ChangeSubtitles();

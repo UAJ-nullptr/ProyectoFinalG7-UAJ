@@ -35,12 +35,12 @@ public class TranscriptDialogueLine : EditorWindow
     {
         VisualElement root = rootVisualElement;
 
-        // Import UXML created manually.
+        // Importa UXML creado manualmente
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/SubtitleGenerator/Scripts/Editor/Window/TranscriptDialogLine.uxml");
         VisualElement labelFromUXML = visualTree.Instantiate();
         root.Add(labelFromUXML);
 
-        // Each editor window contains a root VisualElement object
+        // Cada ventana del editor contiene una raiz a su VisualElement
         lineField = root.Q<TextField>("lineField");
         startTimeLabel = root.Q<Label>("startTime");
         endTimeLabel = root.Q<Label>("endTime");

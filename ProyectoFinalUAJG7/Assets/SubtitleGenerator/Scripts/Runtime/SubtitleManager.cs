@@ -15,6 +15,8 @@ public class SubtitleManager : MonoBehaviour
     public static SubtitleManager instance { get; private set; }
 
     public SubtitleData data;
+
+    // Estructura de datos con la información de un fragmento de audio 
     public struct SubtitleInfo
     {
         public string talker;
@@ -24,6 +26,7 @@ public class SubtitleManager : MonoBehaviour
         public int endTime;
     }
 
+    // Estructura de datos por si se quisiese realiza lectura desde JSON
     [System.Serializable]
     public class JSONformat
     {
@@ -303,7 +306,6 @@ public class SubtitleManager : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         if (data)
@@ -317,7 +319,6 @@ public class SubtitleManager : MonoBehaviour
         subtitlesActivated = false;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyUp(KeyCode.P))

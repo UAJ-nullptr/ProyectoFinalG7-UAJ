@@ -135,7 +135,6 @@ public class SubtitleController : MonoBehaviour
         }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
         subtitles[0].subtitleObj = subtitlesSpeaker;
@@ -159,7 +158,6 @@ public class SubtitleController : MonoBehaviour
         OnStyleChanged(0);
     }
 
-    // Update is called once per frame
     void Update()
     {
         

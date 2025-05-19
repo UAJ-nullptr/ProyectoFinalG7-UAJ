@@ -46,21 +46,22 @@ public class SubtitleComponent : MonoBehaviour
 
         textComponent.text = text;
 
-
-
         float textCanvasWidth = textComponent.preferredWidth;
 
+        // Se ajusta el tamaño horizontal del texto a un máximo definido
         if (textCanvasWidth > maxWidth)
         {
             textCanvasWidth = maxWidth;
         }
 
+        // Se ajusta el tamaño al nuevo ancho
         textRect.sizeDelta = new Vector2(textCanvasWidth + 40, textRect.sizeDelta.y);
-
+        // Se fuerza la actualización del canvas
         Canvas.ForceUpdateCanvases();
 
+        // Con la nueva medida horizontal se calcula la nueva altura
         float textCanvasHeight = textComponent.preferredHeight;
-
+        // Se asignan las dimensiones finales del fondo y el texto
         textRect.sizeDelta = new Vector2(textCanvasWidth + 40, textCanvasHeight + 10);
         backgroundRect.sizeDelta = new Vector2(textCanvasWidth + 40, textCanvasHeight + 10);
     }
@@ -120,7 +121,6 @@ public class SubtitleComponent : MonoBehaviour
     public bool hasBackground() { return background; }
     #endregion
 
-    // Start is called before the first frame update
     void Awake()
     {
         // Text
@@ -141,7 +141,6 @@ public class SubtitleComponent : MonoBehaviour
         anchorPosition = transform.position;
     }
 
-    // Update is called once per frame
     void Update()
     {
         

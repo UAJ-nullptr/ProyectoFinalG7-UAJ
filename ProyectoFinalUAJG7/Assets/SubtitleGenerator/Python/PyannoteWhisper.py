@@ -56,10 +56,6 @@ else:
     audio_file = input_file
 diarization = pipeline({'uri': 'audio', 'audio': audio_file})
 
-# Por si se quiere mostrar los resultados de la diarización (marcas de tiempo y hablantes)
-#for speech_turn, _, speaker in diarization.itertracks(yield_label=True):
-    #print(f"Speaker {speaker} speaks from {speech_turn.start} to {speech_turn.end}")
-
 # Paso 3: Separación del audio en fragmentos
 # Definir la carpeta de salida
 output_folder = "audio_segments"
@@ -99,7 +95,6 @@ srt_segments = []
 for segment, speaker, start, end in segments:
     # Transcribir el segmento de audio
     result = whisper.transcribe(model,os.path.abspath(segment))
-    #result = model.transcribe(os.path.abspath("segment"))
     srt_segments.append({
         'start': start,
         'end': end,

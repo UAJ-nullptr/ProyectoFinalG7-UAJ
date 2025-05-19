@@ -156,21 +156,10 @@ public class TranscriptWindow : EditorWindow
                 return;
             }
 
-            //// 1. Crear entorno virtual
-            //RunCommand($"{pythonExe} -m venv {venvPath}", scriptDir, true);
-
-            //// 2. Activar el entorno virtual
-            //string activateCmd = Path.Combine(venvPath, "Scripts", "activate");
-            //RunCommand($"{activateCmd}", scriptDir, true);
-
             string pythonCmd = $"{scriptName}"; /*{arguments}*/
 
-            // 3. Correr el archivo de python
-            //string transPath = RunCommand(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
+            // Correr el archivo de python
             string transPath = await RunCommandAsync(pythonExe, $"\"{scriptName}\" \"{inputPath}\"", scriptDir);
-
-            // Podemos dejar definida la carpeta donde se va a encontrar el SRT hardcodeado
-            // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas
 
             // Método que expondrá en la ventana los dialogos
             ExposeTranscriptElements(transPath);
@@ -277,7 +266,7 @@ public class TranscriptWindow : EditorWindow
         }
 
         string folderPath = "Assets/SubtitleGenerator/Subtitles";
-        // Check if folder exists, create it if not
+        // Comprueba si la carpeta existe o no y si no exite la crea
         if (!AssetDatabase.IsValidFolder(folderPath))
         {
             string aux = AssetDatabase.CreateFolder("Assets/SubtitleGenerator", "Subtitles");
@@ -287,7 +276,7 @@ public class TranscriptWindow : EditorWindow
         saveToFile(folderPath);
         createNewSubtitleData(folderPath);
         subtitleData.dialogue = currentDiag;
-        subtitleData.dialogueAudio = null; //TODO: convertir video a audio
+        subtitleData.dialogueAudio = null;
         fileInfoInput.value = subtitleData;
     }
 
@@ -379,7 +368,7 @@ public class TranscriptWindow : EditorWindow
         saveToFile(folderPath);
         createNewSubtitleData(folderPath);
         subtitleData.dialogue = currentDiag;
-        subtitleData.dialogueAudio = null; //TODO: convertir video a audio
+        subtitleData.dialogueAudio = null;
         fileInfoInput.value = subtitleData;
     }
 
