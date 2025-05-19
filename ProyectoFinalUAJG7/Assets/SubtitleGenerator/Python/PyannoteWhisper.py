@@ -13,6 +13,7 @@ packages = [
     "openai-whisper>=20230314",
     "numpy>=1.21.0",
     "scipy>=1.7.0",
+    "openai-whisper>=20230314",
     "einops>=0.6.1",
     "pytorch-lightning>=2.0.0",
     "pyannote.core>=5.0.0",

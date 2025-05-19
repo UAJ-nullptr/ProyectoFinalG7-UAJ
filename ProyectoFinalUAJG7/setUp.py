@@ -1,5 +1,4 @@
 import os
-import whisper
 import venv
 import sys
 import subprocess
@@ -24,7 +23,7 @@ def install_model():
     
 def install_package(package):
     try:
-        subprocess.check_call([sys.executable, "-m", "pip", "install", package, "-t", os.path.join(env_dir, "Lib", "site-packages")])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
         print(f"{package} instalado correctamente.")
     except subprocess.CalledProcessError:
         print(f"Error al instalar {package}.")
@@ -40,5 +39,7 @@ packages = [
 for package in packages:
     install_package(package)
 print("Instalación completa de todos los paquetes.")
+
+import whisper
 
 install_model()
