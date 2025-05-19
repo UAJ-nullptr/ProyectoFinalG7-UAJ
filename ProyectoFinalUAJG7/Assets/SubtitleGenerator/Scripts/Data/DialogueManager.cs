@@ -1,14 +1,11 @@
-using Codice.Client.BaseCommands;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using static SubtitleManager;
 
 public struct Line
 {
@@ -91,16 +88,19 @@ public class DialogueManager
                 {                 
                     if(newLine.endTime - newLine.startTime > 10000)
                     {
+                        string talker = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
                         List<Line> listAux = SplitPhrases(line.Substring(colonIndex + 1).Trim(), (int)newLine.startTime, (int)newLine.endTime);
 
-                        for (int i = 0; i < listAux.Count-1; i++)
+                        for (int i = 0; i < listAux.Count - 1; i++)
                         {
                             // Se añade el segmento a la lista de súbtitulos
                             newLine = listAux[i];
+                            newLine.actorKey = talker;
                             dialogue.lines.Add(newLine);
                             newLine = new();
                         }
                         newLine = listAux[listAux.Count - 1];
+                        newLine.actorKey = talker;
                     }
                     else
                     {
@@ -134,7 +134,8 @@ public class DialogueManager
                 newLine = new();
             }
         }
-        
+        // Se añade el segmento a la lista de súbtitulos si termina, para recoger la ultima linea
+        dialogue.lines.Add(newLine);
         reader.Close();
 
         return dialogue;

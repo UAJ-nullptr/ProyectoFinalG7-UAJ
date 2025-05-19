@@ -14,6 +14,7 @@ public class SubtitleManager : MonoBehaviour
 {
     public static SubtitleManager instance { get; private set; }
 
+    public SubtitleData data;
     public struct SubtitleInfo
     {
         public string talker;
@@ -149,14 +150,17 @@ public class SubtitleManager : MonoBehaviour
                 {
                     if (subtitleInfo.endTime - subtitleInfo.startTime > 10000)
                     {
+                        string talker = line.Substring(0, colonIndex).Replace("Speaker", "").Trim();
                         List<SubtitleInfo> listAux = SplitPhrases(line.Substring(colonIndex + 1).Trim(), subtitleInfo.startTime, subtitleInfo.endTime);
 
                         for (int i = 0; i < listAux.Count - 1; i++)
                         {
-                            // Se añade el segmento a la lista de súbtitulos
-                            subtitles.Add(listAux[i]);
+                            SubtitleInfo info = listAux[i];
+                            info.talker = talker;
+                            subtitles.Add(info);
                         }
                         // Se hace está última asignación porque el último fragmento se inserta con normalidad al final
+                        subtitleInfo.talker = talker;
                         subtitleInfo = listAux[listAux.Count - 1];
                     }
                     else
