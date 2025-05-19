@@ -6,15 +6,14 @@
     <ui:VisualElement name="MainGrid" style="flex-grow: 1; flex-direction: row;">
         <ui:VisualElement name="FileConfig" style="flex-grow: 1; height: 100%; width: 80%;">
             <uie:ObjectField label="Audio File" name="audioField" style="margin-bottom: 5px;" />
+            <uie:ObjectField label="Subtitle Object" name="fileInfo" style="height: auto;" />
             <ui:Button text="Process" parse-escape-sequences="true" display-tooltip-when-elided="true" name="process" style="margin-bottom: 0;" />
-            <uie:ObjectField label="File Info" name="fileInfo" />
             <ui:Foldout text="Actors" name="actors" style="max-height: none;">
                 <ui:Instance template="ActorsFoldout" name="ActorsFoldout" />
             </ui:Foldout>
             <ui:VisualElement name="buttonsView" style="flex-grow: 1; flex-direction: row; align-self: flex-end; transform-origin: center; min-height: auto; flex-shrink: 1; max-height: none; margin-top: 5px;">
                 <ui:Button text="Save" parse-escape-sequences="true" display-tooltip-when-elided="true" name="saveButton" style="flex-grow: 1; height: 20px;" />
                 <ui:Button text="Export" parse-escape-sequences="true" display-tooltip-when-elided="true" name="exportButton" style="flex-grow: 1; height: 20px;" />
-                <ui:Button text="Delete" parse-escape-sequences="true" display-tooltip-when-elided="true" name="deleteButton" style="flex-grow: 1; height: 20px;" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement style="flex-grow: 1; margin-right: 2px; background-color: rgb(208, 208, 208); margin-left: 2px; width: 2px;" />

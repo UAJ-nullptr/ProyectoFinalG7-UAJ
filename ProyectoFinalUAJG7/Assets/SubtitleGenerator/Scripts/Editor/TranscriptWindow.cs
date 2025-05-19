@@ -27,7 +27,6 @@ public class TranscriptWindow : EditorWindow
     private Foldout actorsFoldout;
     private UnityEngine.UIElements.Button saveButton;
     private UnityEngine.UIElements.Button exportButton;
-    private UnityEngine.UIElements.Button deleteButton;
     private ScrollView scrollView;
 
     // Audio a procesar
@@ -49,7 +48,7 @@ public class TranscriptWindow : EditorWindow
     {
         TranscriptWindow window = GetWindow<TranscriptWindow>();
         window.titleContent = new GUIContent("Transcript Audio Tool");
-        window.maxSize = new Vector2(900, 700);
+        window.maxSize = new Vector2(900, 600);
         window.minSize = window.maxSize;
     }
 
@@ -71,7 +70,6 @@ public class TranscriptWindow : EditorWindow
         actorsFoldout = root.Q<Foldout>("actors");
         saveButton = root.Q<UnityEngine.UIElements.Button>("saveButton");
         exportButton = root.Q<UnityEngine.UIElements.Button>("exportButton");
-        deleteButton = root.Q<UnityEngine.UIElements.Button>("deleteButton");
         scrollView = root.Q<ScrollView>("transcriptElements");
 
         // Asignar callbacks
@@ -81,7 +79,6 @@ public class TranscriptWindow : EditorWindow
 
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
-        deleteButton.clicked += DeleteOptions;
 
         dialogueManager = new DialogueManager();
         transcriptDialogueList = new List<TranscriptDialogueLine>();
@@ -168,7 +165,7 @@ public class TranscriptWindow : EditorWindow
         }
         else
         {
-            UnityEngine.Debug.LogWarning("There is no file to transcript: please process audio/video before saving");
+            UnityEngine.Debug.LogWarning("There is no file to transcript: please select an audio/video in the 'Audio File' or 'Subtitle Object' field for it to be processed");
         }
     }
 
@@ -370,18 +367,6 @@ public class TranscriptWindow : EditorWindow
         subtitleData.dialogue = currentDiag;
         subtitleData.dialogueAudio = null;
         fileInfoInput.value = subtitleData;
-    }
-
-    // Setea la interfaz y su info a los valores iniciales
-    private void DeleteOptions()
-    {
-        UnityEngine.Debug.Log("Delete");
-        audioToTranscript = null;
-        videoToTranscript = null;
-        fileInfoInput = null;
-        scrollView.Clear();
-        actorsFoldout.Clear();
-        Repaint();
     }
 
     public List<TranscriptDialogueLine> getTranscriptsList()
