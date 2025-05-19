@@ -9,12 +9,12 @@ public class TranscriptDialogueLine : EditorWindow
     public Dialogue dialogueRef;
     public List<string> actorNames;
 
-    TextField lineField;
-    Label startTimeLabel;
-    Label endTimeLabel;
-    Label actorLabel;
-    Label actorName;
-    DropdownField actorDrop;
+    private TextField lineField;
+    private Label startTimeLabel;
+    private Label endTimeLabel;
+    private Label actorLabel;
+    private Label actorName;
+    private DropdownField actorDrop;
 
     public void PopulateDialogueLine(Line line, Dialogue dialogue, List<string> names)
     {
@@ -75,23 +75,47 @@ public class TranscriptDialogueLine : EditorWindow
     private void SetCallBacks()
     {
         actorDrop.RegisterValueChangedCallback(evt => { DropDownUpdateSpeaker(); });
+        lineField.RegisterValueChangedCallback(evt => { UpdateLineContent(evt.newValue); });
     }
 
     public void DropDownUpdateSpeaker()
     {
         actorName.text = "> " + actorDrop.value;
+        lineRef.actorKey = actorDrop.value;
+    }
+
+    private void UpdateLineContent(string newContent)
+    {
+        lineRef.line = newContent;
     }
 
     public void UpdateSpeakerName(string defaultName, string newName) {
-        int index = actorDrop.choices.IndexOf(defaultName.Replace("> ", ""));
-        if (index != -1)
-        {
-            actorDrop.choices[index] = newName;
-        }
         if (actorName.text == defaultName) {
+            string trimedDefaultName = defaultName.Replace("> ", "");
+
+            // Cambiar en la interfaz
             actorName.text = "> " + newName;
             actorDrop.value = newName;
+            int index = actorDrop.choices.IndexOf(trimedDefaultName);
+            if (index != -1) actorDrop.choices[actorDrop.choices.IndexOf(trimedDefaultName)] = newName;
+
+            // En la línea
+            lineRef.actorKey = newName;
+
+            // Cambiar el actor en el dialogo
+            if (dialogueRef.actors.ContainsKey(trimedDefaultName))
+            {
+                Actor actorAux = dialogueRef.actors[trimedDefaultName];
+                actorAux.name = newName;
+                dialogueRef.actors.Remove(trimedDefaultName);
+                dialogueRef.actors[newName] = actorAux;
+            }
         }
+    }
+
+    public Line getLine()
+    {
+        return lineRef;
     }
 }
 

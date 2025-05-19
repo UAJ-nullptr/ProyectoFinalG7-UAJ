@@ -17,8 +17,6 @@ using UnityEngine.Video;
 using static SubtitleManager;
 using Debug = UnityEngine.Debug;
 
-
-
 public class TranscriptWindow : EditorWindow
 {
     // Elementos de la UI de la ventana en orden de aparicion
@@ -78,8 +76,7 @@ public class TranscriptWindow : EditorWindow
         // Asignar callbacks
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
         fileInfoInput.RegisterValueChangedCallback(FileLoaded);
-        //processButton.clicked += ProcessAudio;
-        processButton.clicked += ExposeTranscriptElements;
+        processButton.clicked += ProcessAudio;
 
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
@@ -174,9 +171,13 @@ public class TranscriptWindow : EditorWindow
             // O podemos intentar sacar el output de python pero creo que eso te saca toda la consola y son muchas cosas
 
             // Método que expondrá en la ventana los dialogos
-            ExposeTranscriptElements();
+            ExposeTranscriptElements("./Assets/SubtitleGenerator/Tests/prueba6.txt");
 
             UnityEngine.Debug.Log("Processed");
+        }
+        else
+        {
+            UnityEngine.Debug.LogWarning("There is no file to transcript: please process audio/video before saving");
         }
     }
 
@@ -208,12 +209,10 @@ public class TranscriptWindow : EditorWindow
         }
     }
 
-
-    private void ExposeTranscriptElements()
+    private void ExposeTranscriptElements(string srtPath)
     {
         UnityEngine.Debug.Log("Mostrando texto obtenido");
-        string srtPath = "./Assets/SubtitleGenerator/Tests/prueba4.txt"; // -> esto debería pasar como parámetro
-        currentDiag = (Dialogue)dialogueManager.ReadTextSRT(srtPath);
+        currentDiag = (Dialogue) dialogueManager.ReadTextSRT(srtPath);
 
         // Foldout de actores
         VisualTreeAsset actorsAsset = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(
@@ -231,7 +230,7 @@ public class TranscriptWindow : EditorWindow
         foreach (var actor in currentDiag.actors)
         {
             ActorsFoldout newActor = CreateInstance<ActorsFoldout>();
-            newActor.PopulateActorFoldout(actor.Key);
+            newActor.PopulateActorFoldout(currentDiag, actor.Key);
             newActor.CreateGUI();
             newActor.SetWindow(this);
 
@@ -245,7 +244,6 @@ public class TranscriptWindow : EditorWindow
     private void PopulateTranscriptLineList(List<string> actorsNamesList)
     {
         // Lista de transcripción
-
         scrollView.Clear();
         transcriptDialogueList.Clear();
         foreach (var line in currentDiag.lines)
@@ -263,25 +261,96 @@ public class TranscriptWindow : EditorWindow
     {
         UnityEngine.Debug.Log("Save");
 
+        // Comprobar si se ha seleccionado algo a procesar
         if (!audioToTranscript && !videoToTranscript && !subtitleData)
         {
             UnityEngine.Debug.LogWarning("There is no file to transcript: please process audio/video before saving");
             return;
         }
 
-        if (!subtitleData)
+        string folderPath = "Assets/Subtitles";
+        // Check if folder exists, create it if not
+        if (!AssetDatabase.IsValidFolder(folderPath))
         {
-            createNewSubtitleData();
+            string aux = AssetDatabase.CreateFolder("Assets", "Subtitles");
+            folderPath = AssetDatabase.GUIDToAssetPath(aux);
         }
+
+        saveToFile(folderPath);
+        createNewSubtitleData(folderPath);
         subtitleData.dialogue = currentDiag;
         subtitleData.dialogueAudio = null; //TODO: convertir video a audio
         fileInfoInput.value = subtitleData;
     }
 
-    private void createNewSubtitleData()
+    private void saveToFile(string folderPath)
     {
-        string folderPath = EditorUtility.OpenFolderPanel("Choose Folder to Save SubtitleData", "Assets", "");
+        string srtPath = folderPath + "\\" + (audioToTranscript ? audioToTranscript.name : videoToTranscript.name) + ".str";
+        StreamWriter writer = new StreamWriter(srtPath);
 
+        int index = 1;
+        foreach (TranscriptDialogueLine tdl in transcriptDialogueList)
+        {
+            // Obtener la línea y escribir el index
+            Line line = tdl.getLine();
+            writer.WriteLine(index);
+
+            // Escribir el tiempo formateado
+            TimeSpan startTime = TimeSpan.FromMilliseconds(line.startTime);
+            string startFormat = string.Format("{0:00}:{1:00}:{2:00},{3:000}",
+                startTime.Hours,
+                startTime.Minutes,
+                startTime.Seconds,
+                startTime.Milliseconds);
+            TimeSpan endTime = TimeSpan.FromMilliseconds(line.endTime);
+            string endFormat = string.Format("{0:00}:{1:00}:{2:00},{3:000}",
+                startTime.Hours,
+                startTime.Minutes,
+                startTime.Seconds,
+                startTime.Milliseconds);
+            writer.WriteLine(startFormat + " --> " + endFormat);
+
+            // Escribir el speaker y la línea
+            writer.WriteLine("Speaker " + line.actorKey + ":  " + line.line);
+            writer.WriteLine();
+
+            index++;
+        }
+        writer.Close();
+    }
+
+    private void createNewSubtitleData(string folderPath)
+    {
+        
+        SubtitleData newSD = CreateInstance<SubtitleData>();
+        newSD.name = audioToTranscript ? audioToTranscript.name : videoToTranscript.name;
+
+        // Create the asset
+        string assetPath = Path.Combine(folderPath, newSD.name + ".asset");
+
+        if (AssetDatabase.LoadAssetAtPath<SubtitleData>(assetPath) != null)
+        {
+            AssetDatabase.DeleteAsset(assetPath);
+        }
+
+        AssetDatabase.CreateAsset(newSD, assetPath);
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        SubtitleData loadedSD = AssetDatabase.LoadAssetAtPath<SubtitleData>(assetPath);
+        subtitleData = loadedSD;
+    }
+
+    private void ExportTranscript()
+    {
+        UnityEngine.Debug.Log("Export");
+
+        if (!audioToTranscript && !videoToTranscript && !subtitleData)
+        {
+            UnityEngine.Debug.LogWarning("There is no file to transcript: please process audio/video before saving");
+            return;
+        }
+
+        string folderPath = EditorUtility.OpenFolderPanel("Choose Folder to Save New srt File and SubtitleData", "Assets", "");
         if (string.IsNullOrEmpty(folderPath))
         {
             Debug.LogWarning("Save canceled by user.");
@@ -299,41 +368,8 @@ public class TranscriptWindow : EditorWindow
             return;
         }
 
-
-        SubtitleData newSD = CreateInstance<SubtitleData>();
-        newSD.name = audioToTranscript.name;
-        
-
-        // Check if folder exists, create it if not
-        if (!AssetDatabase.IsValidFolder(folderPath))
-        {
-            AssetDatabase.CreateFolder("Assets", "Subtitles");
-        }
-
-        // Create the asset
-        string assetPath = Path.Combine(folderPath, newSD.name + ".asset");
-        
-        
-        AssetDatabase.CreateAsset(newSD, assetPath);
-        AssetDatabase.SaveAssets();
-        AssetDatabase.Refresh();
-        SubtitleData loadedSD = AssetDatabase.LoadAssetAtPath<SubtitleData>(assetPath);
-        subtitleData = loadedSD;
-
-    }
-
-    // Exportar la transcripcion
-    private void ExportTranscript()
-    {
-        UnityEngine.Debug.Log("Export");
-        if (!audioToTranscript && !videoToTranscript && !subtitleData)
-        {
-            UnityEngine.Debug.LogWarning("There is no file to transcript: please process audio/video before saving");
-            return;
-        }
-        // Guardar en un archivo... otra vez?
-        createNewSubtitleData();
-
+        saveToFile(folderPath);
+        createNewSubtitleData(folderPath);
         subtitleData.dialogue = currentDiag;
         subtitleData.dialogueAudio = null; //TODO: convertir video a audio
         fileInfoInput.value = subtitleData;
@@ -345,6 +381,10 @@ public class TranscriptWindow : EditorWindow
         UnityEngine.Debug.Log("Delete");
         audioToTranscript = null;
         videoToTranscript = null;
+        fileInfoInput = null;
+        scrollView.Clear();
+        actorsFoldout.Clear();
+        Repaint();
     }
 
     public List<TranscriptDialogueLine> getTranscriptsList()

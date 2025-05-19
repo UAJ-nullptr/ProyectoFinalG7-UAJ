@@ -1,3 +1,4 @@
+using Codice.Client.BaseCommands.BranchExplorer.Layout;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.UIElements;
@@ -7,15 +8,17 @@ using static SubtitleManager;
 
 public class ActorsFoldout : EditorWindow
 {
-    TextField actorField;
-    Label actorName;
-    ColorField actorColor;
+    private TextField actorField;
+    private Label actorName;
+    private ColorField actorColor;
+    
+    private TranscriptWindow transcriptWindow;
+    private string actor;
+    private Dialogue dialogueRef;
 
-    TranscriptWindow transcriptWindow;
-    string actor;
-
-    public void PopulateActorFoldout(string ac)
+    public void PopulateActorFoldout(Dialogue dialogue, string ac)
     {
+        dialogueRef = dialogue;
         actor = ac;
     }
 
@@ -55,10 +58,8 @@ public class ActorsFoldout : EditorWindow
 
     private void SetCallBacks()
     {
-        actorField.RegisterValueChangedCallback(evt =>
-        {
-            ChangeSpeakers(actorName.text, evt.newValue);
-        });
+        actorField.RegisterValueChangedCallback(evt => { ChangeSpeakers(actorName.text, evt.newValue); });
+        actorColor.RegisterValueChangedCallback(evt => { ChangeColor(evt.newValue); });
     }
 
     public void SetWindow(TranscriptWindow tW)
@@ -69,10 +70,18 @@ public class ActorsFoldout : EditorWindow
     private void ChangeSpeakers(string defaultName, string newName)
     {
         actorName.text = "> " + newName;
+        actor = newName;
         foreach (TranscriptDialogueLine td in transcriptWindow.getTranscriptsList())
         {
             td.UpdateSpeakerName(defaultName, newName);
         }
+    }
+
+    private void ChangeColor(Color c)
+    {
+        Actor actorStruct = dialogueRef.actors[actor];
+        actorStruct.color = new Color(c.r, c.g, c.b, c.a);
+        dialogueRef.actors[actor] = actorStruct;
     }
 }
 
