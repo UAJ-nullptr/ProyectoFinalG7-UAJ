@@ -52,6 +52,21 @@ public class TranscriptWindow : EditorWindow
         window.minSize = window.maxSize;
     }
 
+    public void setActorFromKey(string key, string name, Color color)
+    {
+        Actor ac = currentDiag.actors[key];
+        ac.name = name;
+        ac.color = color;
+        currentDiag.actors[key] = ac;
+    }
+
+    public void setLineFromIndex(int index, string line, string actorKey) {
+        Line l = currentDiag.lines[index];
+        l.line = line;
+        l.actorKey = actorKey;
+        currentDiag.lines[index] = l;
+    }
+
     // Crear la ventana a partir del UXMl y obtener los elementos
     public void CreateGUI()
     {
@@ -75,7 +90,7 @@ public class TranscriptWindow : EditorWindow
         // Asignar callbacks
         audioFileInput.RegisterValueChangedCallback(AudioSelected);
         fileInfoInput.RegisterValueChangedCallback(FileLoaded);
-        processButton.clicked += ProcessAudio;
+        processButton.clicked += generateValuesDebug;
 
         saveButton.clicked += SaveTranscript;
         exportButton.clicked += ExportTranscript;
@@ -232,7 +247,7 @@ public class TranscriptWindow : EditorWindow
         {
             Debug.Log("hola");
             ActorsFoldout newActor = CreateInstance<ActorsFoldout>();
-            newActor.PopulateActorFoldout(currentDiag, actor.Key);
+            newActor.PopulateActorFoldout(this, currentDiag, actor.Key);
             newActor.CreateGUI();
             newActor.SetWindow(this);
 
@@ -260,7 +275,7 @@ public class TranscriptWindow : EditorWindow
         foreach (var line in currentDiag.lines)
         {
             TranscriptDialogueLine newDiagLine = CreateInstance<TranscriptDialogueLine>();
-            newDiagLine.PopulateDialogueLine(line, currentDiag, actorsNamesList);
+            newDiagLine.PopulateDialogueLine(this, line, currentDiag, actorsNamesList);
             newDiagLine.CreateGUI();
             scrollView.contentContainer.Add(newDiagLine.rootVisualElement);
             transcriptDialogueList.Add(newDiagLine);
@@ -354,6 +369,7 @@ public class TranscriptWindow : EditorWindow
         }
 
         AssetDatabase.CreateAsset(newSD, assetPath);
+        EditorUtility.SetDirty(newSD);
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         SubtitleData loadedSD = AssetDatabase.LoadAssetAtPath<SubtitleData>(assetPath);

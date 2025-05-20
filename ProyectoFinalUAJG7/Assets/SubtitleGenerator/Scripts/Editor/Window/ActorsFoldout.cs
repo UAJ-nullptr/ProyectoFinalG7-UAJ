@@ -16,7 +16,7 @@ public class ActorsFoldout : EditorWindow
     private string actor;
     private Dialogue dialogueRef;
 
-    public void PopulateActorFoldout(Dialogue dialogue, string ac)
+    public void PopulateActorFoldout(TranscriptWindow tw, Dialogue dialogue, string ac)
     {
         dialogueRef = dialogue;
         actor = ac;
@@ -53,6 +53,7 @@ public class ActorsFoldout : EditorWindow
         {
             actorName.text = "> " + actor;
             actorColor.value = dialogueRef.actors[actor].color;
+            
         }
     }
 
@@ -82,6 +83,7 @@ public class ActorsFoldout : EditorWindow
         Actor actorStruct = dialogueRef.actors[actor];
         actorStruct.color = new Color(c.r, c.g, c.b, c.a);
         dialogueRef.actors[actor] = actorStruct;
+        transcriptWindow.setActorFromKey(actor, actor, c);
     }
 }
 

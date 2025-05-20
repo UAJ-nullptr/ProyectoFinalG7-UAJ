@@ -16,11 +16,17 @@ public class TranscriptDialogueLine : EditorWindow
     private Label actorName;
     private DropdownField actorDrop;
 
-    public void PopulateDialogueLine(Line line, Dialogue dialogue, List<string> names)
+    private TranscriptWindow twReference;
+    private int lineIndex;
+
+    public void PopulateDialogueLine(TranscriptWindow tW, Line line, Dialogue dialogue, List<string> names)
     {
+
         lineRef = line;
         dialogueRef = dialogue;
         actorNames = names;
+        twReference = tW;
+        lineIndex = dialogue.lines.IndexOf(line);
 
     }
 
@@ -87,6 +93,7 @@ public class TranscriptDialogueLine : EditorWindow
     private void UpdateLineContent(string newContent)
     {
         lineRef.line = newContent;
+        twReference.setLineFromIndex(lineIndex, newContent, lineRef.actorKey);
     }
 
     public void UpdateSpeakerName(string defaultName, string newName) {
@@ -101,7 +108,7 @@ public class TranscriptDialogueLine : EditorWindow
             actorDrop.MarkDirtyRepaint();
             // En la línea
             lineRef.actorKey = newName;
-
+            twReference.setLineFromIndex(lineIndex, lineRef.line, lineRef.actorKey);
             // Cambiar el actor en el dialogo
             if (dialogueRef.actors.ContainsKey(trimedDefaultName))
             {
