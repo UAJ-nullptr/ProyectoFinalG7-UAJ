@@ -245,7 +245,6 @@ public class TranscriptWindow : EditorWindow
         List<string> actorsNamesList = new List<string>();
         foreach (var actor in currentDiag.actors)
         {
-            Debug.Log("hola");
             ActorsFoldout newActor = CreateInstance<ActorsFoldout>();
             newActor.PopulateActorFoldout(this, currentDiag, actor.Key);
             newActor.CreateGUI();
@@ -320,7 +319,15 @@ public class TranscriptWindow : EditorWindow
 
     private void saveToFile(string folderPath)
     {
-        string srtPath = folderPath + "\\" + (audioToTranscript ? audioToTranscript.name : videoToTranscript.name) + ".srt";
+        string srtPath = folderPath + "\\" + "default.srt";
+        if (subtitleData)
+        {
+            srtPath = folderPath + "\\" + subtitleData.name + ".srt";
+        }
+        else if (audioToTranscript || videoToTranscript)
+        {        
+            srtPath = folderPath + "\\" + (audioToTranscript ? audioToTranscript.name : videoToTranscript.name) + ".srt";
+        }
         StreamWriter writer = new StreamWriter(srtPath);
 
         int index = 1;

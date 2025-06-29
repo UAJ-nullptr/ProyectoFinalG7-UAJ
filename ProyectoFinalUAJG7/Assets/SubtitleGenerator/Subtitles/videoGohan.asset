@@ -12,4 +12,33 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b64e35a6d7e64b443878b01ad27b30c1, type: 3}
   m_Name: videoGohan
   m_EditorClassIdentifier: 
+  lines:
+  - actorKey: SPEAKER_00
+    startTime: 993
+    endTime: 2528
+    line: I got a good feeling about this.
+  - actorKey: SPEAKER_00
+    startTime: 3018
+    endTime: 5279
+    line: fighting you will make me crazy strong!
+  - actorKey: SPEAKER_00
+    startTime: 5549
+    endTime: 6595
+    line: Thanks in advance.
+  - actorKey: SPEAKER_01
+    startTime: 8030
+    endTime: 8671
+    line: fight you.
+  - actorKey: SPEAKER_01
+    startTime: 9228
+    endTime: 10578
+    line: No, I wanna kill you.
+  actorKeys:
+  - SPEAKER_00
+  - SPEAKER_01
+  actorValues:
+  - name: SPEAKER_00
+    color: {r: 1, g: 0, b: 0, a: 1}
+  - name: SPEAKER_01
+    color: {r: 0.04401779, g: 1, b: 0, a: 1}
   dialogueAudio: {fileID: 0}

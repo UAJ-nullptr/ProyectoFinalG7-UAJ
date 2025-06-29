@@ -122,7 +122,7 @@ public class SubtitleManager : MonoBehaviour
             reader = new StreamReader(instance.path);
         }
         catch (Exception) {
-            Debug.LogError("Archivo no encontrado: " + instance.path);
+            Debug.LogWarning("Archivo SRT o Subtitle Data no encontrado: " + instance.path);
             return;
         }
 

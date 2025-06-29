@@ -1722,7 +1722,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64a1984f20516a2419e63dc00b3509e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  video: {fileID: 32900000, guid: 50891a282a4a587409fdd00a128e2032, type: 3}
+  video: {fileID: 32900000, guid: 392e843e3aeadba48b90a58518524a6e, type: 3}
 --- !u!328 &745863358
 VideoPlayer:
   m_ObjectHideFlags: 0
@@ -2352,11 +2352,11 @@ RectTransform:
   m_Children:
   - {fileID: 1602447638}
   - {fileID: 2105180539}
+  - {fileID: 745863354}
   - {fileID: 713882791}
   - {fileID: 1294893688}
   - {fileID: 403228861}
   - {fileID: 1308584825}
-  - {fileID: 745863354}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -5540,6 +5540,22 @@ PrefabInstance:
     - target: {fileID: 4700365285365393637, guid: 0b628466d22323640bbf9498355ae91c, type: 3}
       propertyPath: m_Name
       value: SubtitleManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238869940638934974, guid: 0b628466d22323640bbf9498355ae91c, type: 3}
+      propertyPath: m_Volume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5238869940638934974, guid: 0b628466d22323640bbf9498355ae91c, type: 3}
+      propertyPath: m_audioClip
+      value: 
+      objectReference: {fileID: 8300000, guid: e811c1cbdd47dec4394c4dbf875ddd5e, type: 3}
+    - target: {fileID: 5558239316961940340, guid: 0b628466d22323640bbf9498355ae91c, type: 3}
+      propertyPath: data
+      value: 
+      objectReference: {fileID: 11400000, guid: 213b1003b603695488dd871b9d912792, type: 2}
+    - target: {fileID: 5558239316961940340, guid: 0b628466d22323640bbf9498355ae91c, type: 3}
+      propertyPath: path
+      value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5558239316961940340, guid: 0b628466d22323640bbf9498355ae91c, type: 3}
       propertyPath: audioSource
